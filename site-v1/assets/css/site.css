@@ -258,6 +258,14 @@ h2.display{ font-size:var(--t-h2); }
   background:rgba(11,11,13,.82); color:var(--real); border:1px solid var(--real);
   padding:4px 8px; line-height:1; pointer-events:none;
 }
+.badge-hy{
+  position:absolute; left:12px; bottom:12px; z-index:3;
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase;
+  background:rgba(11,11,13,.82); color:var(--paper); padding:4px 8px; line-height:1; pointer-events:none;
+  border:1px solid transparent;
+  background-image:linear-gradient(rgba(11,11,13,.82),rgba(11,11,13,.82)), linear-gradient(90deg,var(--real),var(--ki));
+  background-origin:border-box; background-clip:padding-box, border-box;
+}
 
 /* ---------- Signature: REAL ⇄ KI Vergleichsregler ---------- */
 .compare{
@@ -339,9 +347,47 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .card{
   flex:0 0 78%; max-width:520px; scroll-snap-align:start; text-decoration:none;
   border:1px solid var(--line); background:var(--ink-2); display:block;
-  transition:border-color .3s var(--ease), transform .4s var(--ease);
+  transition:border-color .3s var(--ease), transform .4s var(--ease), box-shadow .3s var(--ease);
+  appearance:none; padding:0; margin:0; font:inherit; color:inherit; text-align:left; cursor:pointer;
 }
 .card:hover{ border-color:var(--line-2); transform:translateY(-4px); }
+.card:hover{ box-shadow:0 0 0 1px var(--line-2), 0 18px 40px -20px rgba(0,0,0,.6); }
+
+/* ---------- Projekt-Lightbox ---------- */
+.lightbox{
+  border:1px solid var(--line-2); background:var(--ink-2); color:var(--paper);
+  padding:0; width:min(920px,92vw); max-height:88vh; overflow:auto;
+  box-shadow:0 0 0 1px var(--ink), 0 0 60px 4px var(--real);
+  opacity:1; transform:scale(1); transition:opacity .28s var(--ease), transform .28s var(--ease), overlay .28s allow-discrete, display .28s allow-discrete;
+}
+.lightbox[data-glow="ki"]{ box-shadow:0 0 0 1px var(--ink), 0 0 60px 4px var(--ki); }
+.lightbox[data-glow="hy"]{ box-shadow:0 0 0 1px var(--ink), 0 0 50px 4px var(--real), 0 0 50px 4px var(--ki); }
+.lightbox::backdrop{ background:rgba(11,11,13,0); transition:background .28s var(--ease), overlay .28s allow-discrete, display .28s allow-discrete; }
+.lightbox[open]::backdrop{ background:rgba(11,11,13,.86); }
+@starting-style{
+  .lightbox[open]{ opacity:0; transform:scale(.92); }
+  .lightbox[open]::backdrop{ background:rgba(11,11,13,0); }
+}
+.lightbox-close{
+  position:sticky; top:12px; left:100%; margin:12px 12px -32px auto; z-index:2;
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--line-2);
+  background:rgba(11,11,13,.82); color:var(--paper); font-size:1rem; cursor:pointer;
+}
+.lightbox-media{ position:relative; aspect-ratio:16/9; background:var(--ink-3); }
+.lightbox-video{ width:100%; height:100%; object-fit:cover; display:block; }
+.lightbox-ph{
+  position:absolute; inset:0; display:grid; place-items:center;
+  background:linear-gradient(145deg, rgba(255,158,77,.14), rgba(123,97,255,.16)), var(--ink-3);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; color:var(--muted);
+}
+.lightbox-txt{ padding:var(--s-5) var(--s-6) var(--s-6); }
+.lightbox-title{
+  font-family:var(--display); font-weight:800; text-transform:uppercase;
+  font-size:1.5rem; letter-spacing:-.02em; margin:var(--s-2) 0 var(--s-4);
+}
+@media (prefers-reduced-motion:reduce){
+  .lightbox{ animation:none !important; }
+}
 .card-media{ position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink-3); }
 .card-media img{ width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
 .card:hover .card-media img{ transform:scale(1.04); }
