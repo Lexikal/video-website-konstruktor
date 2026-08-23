@@ -291,6 +291,25 @@ h2.display{ font-size:var(--t-h2); }
 .compare-label--l{ left:14px; color:var(--real); border:1px solid var(--real); }
 .compare-label--r{ right:14px; color:var(--ki); border:1px solid var(--ki); }
 
+/* ---------- Scroll-Video-Hintergrund (Leistungen) ----------
+   Video wird an den Scroll-Fortschritt der Seite gekoppelt (JS setzt
+   currentTime), kein autoplay/loop. Kein backdrop-filter über der
+   ganzen Fläche — teuer auf Mobile-GPUs; stattdessen feste Tönung
+   (.veil) nur dort, wo dichter Fließtext steht. Zwischen den Blöcken
+   bleibt das Video sichtbar. */
+.bg-video, .bg-video-fallback{ position:fixed; inset:0; width:100%; height:100%; z-index:-2; pointer-events:none; }
+.bg-video{ object-fit:cover; }
+.bg-video-fallback{ display:none; background:linear-gradient(160deg,#221C3D,var(--ink) 65%); }
+body.page--video-bg-fallback .bg-video{ display:none; }
+body.page--video-bg-fallback .bg-video-fallback{ display:block; }
+.bg-video-vignette{
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(180deg, rgba(11,11,13,.88) 0%, rgba(11,11,13,.1) 22%, rgba(11,11,13,.1) 76%, rgba(11,11,13,.92) 100%);
+}
+.bg-video-badge{ position:fixed; left:16px; bottom:16px; z-index:2; }
+body.page--video-bg .display, body.page--video-bg .kicker{ text-shadow:0 2px 20px rgba(11,11,13,.9); }
+body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var(--s-6); border-radius:2px; }
+
 /* ---------- Leistungen ---------- */
 .svc{
   display:grid; gap:var(--s-4); padding:var(--s-6) 0; border-top:1px solid var(--line);
@@ -475,4 +494,6 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
   *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
   .rv{ opacity:1; transform:none; }
   .marquee ul{ animation:none; }
+  body.page--video-bg .bg-video{ display:none; }
+  body.page--video-bg .bg-video-fallback{ display:block; }
 }

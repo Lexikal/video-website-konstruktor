@@ -72,6 +72,38 @@
     frame();
   }
 
+  /* ---- Scroll-Video-Hintergrund (Leistungen) ----
+     currentTime folgt dem Scroll-Fortschritt der ganzen Seite.
+     Kein .play() — Autoplay-Policies betreffen uns dadurch nicht.
+     Fällt zurück auf CSS-Gradient bei reduced-motion, Sparmodus
+     oder langsamer Verbindung (data-saver), statt das Video zu laden. */
+  if (document.body.classList.contains('page--video-bg')) {
+    var bgVideo = $('.bg-video');
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var lowData = !!(conn && (conn.saveData || /2g/.test(conn.effectiveType || '')));
+    if (bgVideo && !reduce && !lowData) {
+      var ready = false;
+      var scrub = function () {
+        if (!bgVideo.duration || isNaN(bgVideo.duration)) return;
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        bgVideo.currentTime = progress * bgVideo.duration;
+      };
+      bgVideo.addEventListener('loadedmetadata', function () { ready = true; scrub(); });
+      bgVideo.addEventListener('error', function () { document.body.classList.add('page--video-bg-fallback'); });
+      var vTicking = false;
+      window.addEventListener('scroll', function () {
+        if (!ready || vTicking) return;
+        vTicking = true;
+        window.requestAnimationFrame(function () { scrub(); vTicking = false; });
+      }, { passive: true });
+      bgVideo.preload = 'auto';
+      bgVideo.load();
+    } else {
+      document.body.classList.add('page--video-bg-fallback');
+    }
+  }
+
   /* ---- REAL ⇄ KI Vergleichsregler ---- */
   $$('.compare').forEach(function (box) {
     var top = $('.compare-top', box), handle = $('.compare-handle', box), range = $('.compare-range', box);
