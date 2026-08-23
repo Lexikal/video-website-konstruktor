@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accessibility statement | {{NAME}}</title>
+<meta name="description" content="Accessibility statement according to WCAG 2.1 AA / EN 301 549.">
+<link rel="canonical" href="{{DOMAIN}}/en/accessibility.html">
+<link rel="alternate" hreflang="de" href="{{DOMAIN}}/barrierefreiheit.html">
+<link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/accessibility.html">
+<link rel="alternate" hreflang="x-default" href="{{DOMAIN}}/barrierefreiheit.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Accessibility statement | {{NAME}}">
+<meta property="og:description" content="Accessibility statement according to WCAG 2.1 AA / EN 301 549.">
+<meta property="og:url" content="{{DOMAIN}}/en/accessibility.html">
+<meta property="og:image" content="{{DOMAIN}}/assets/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B0B0D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230B0B0D'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23FF9E4D'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/css/site.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <a class="brand" href="index.html"><i aria-hidden="true"></i>{{NAME}}</a>
+  <nav aria-label="Main navigation">
+    <ul class="nav-links"><li><a href="services.html">Services</a></li><li><a href="work.html">Work</a></li><li><a href="lab.html">Lab</a></li><li><a href="about.html">About</a></li></ul>
+  </nav>
+  <div class="lang" role="group" aria-label="Language">
+    <a href="../barrierefreiheit.html" hreflang="de">DE</a>
+    <a href="accessibility.html" hreflang="en" aria-current="true">EN</a>
+  </div>
+  <a class="btn" href="contact.html">Start a project</a>
+  <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span></button>
+</header>
+<div class="drawer" id="menu" data-open="false">
+  <a href="services.html">Services</a><a href="work.html">Work</a><a href="lab.html">Lab</a><a href="about.html">About</a>
+  <a href="contact.html">Start a project</a>
+</div>
+<main id="main">
+<section class="sec"><div class="wrap"><div class="prose"><p class="kicker">Legal</p><h1 class="display">Accessibility<br>statement</h1>
+<div class="todo"><strong>German version is legally binding.</strong> This is a courtesy translation. See the German page for the authoritative text.</div>
+<p>This statement applies to {{DOMAIN}}. The site is designed to WCAG 2.1 level AA / EN 301 549 and is,
+by our own assessment, largely conformant: semantic HTML, full keyboard operability with visible focus,
+text contrast of at least 4.5:1, labelled form fields, respect for <code>prefers-reduced-motion</code>, and
+no auto-playing audio.</p>
+<p>Not yet fully accessible: {{EINSCHRAENKUNGEN}}. These are being improved continuously.</p>
+<h2>Report a barrier</h2>
+<p>Write to <a href="mailto:{{MAIL}}">{{MAIL}}</a> or call <a href="tel:{{TEL_RAW}}">{{TEL}}</a>.
+We usually reply within five working days. If your feedback is not handled satisfactorily, you may contact
+the competent market surveillance authority ({{MARKTUEBERWACHUNG}}).</p>
+<p class="muted" style="margin-top:40px">Created {{STAND}} on the basis of a self-assessment.</p></div></div></section>
+</main><footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="brand" style="margin:0 0 12px"><i aria-hidden="true"></i>{{NAME}}</p>
+        <p class="muted" style="margin:0;max-width:34ch">Fashion, beauty and brand film · {{STADT}} · Germany & Europe</p>
+        <p style="margin-top:20px"><a class="arrow-link" href="contact.html">Start a project →</a></p>
+      </div>
+      <div><h4>Navigation</h4><ul><li><a href="services.html">Services</a></li><li><a href="work.html">Work</a></li><li><a href="lab.html">Lab</a></li><li><a href="about.html">About</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="imprint.html">Imprint</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="accessibility.html">Accessibility</a></li></ul></div>
+      <div><h4>Contact</h4><ul>
+        <li><a href="mailto:{{MAIL}}">{{MAIL}}</a></li>
+        <li><a href="tel:{{TEL_RAW}}">{{TEL}}</a></li>
+        <li><a href="{{INSTAGRAM}}" rel="me noopener" target="_blank">Instagram</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-legal">
+      <p style="margin:0">Image credits: all images and videos are own productions, licensed stock, or created with the help of AI. AI-generated content is labelled directly on the asset.</p>
+      <p style="margin:0">This site sets no cookies, runs no tracking and loads no third-party services.</p>
+      <p style="margin:0">© <span data-year>2026</span> {{NAME}}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
