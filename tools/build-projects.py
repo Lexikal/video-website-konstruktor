@@ -117,13 +117,13 @@ def build_page(project, nxt, lang, template):
     return out
 
 
-def card(project, lang):
-    """Karte für die Übersicht — verlinkt jetzt auf die eigene Projektseite."""
+def card(project, lang, prefix=""):
+    """Karte für Übersicht und Startseite — verlinkt auf die eigene Projektseite."""
     text = project[lang]
     modus = MODUS.get(project.get("mode", "real"), MODUS["real"])
     href = (
-        f'projekte/{project["slug"]}.html' if lang == "de"
-        else f'projects/{project["slug"]}.html'
+        f'{prefix}projekte/{project["slug"]}.html' if lang == "de"
+        else f'{prefix}projects/{project["slug"]}.html'
     )
     placeholder = "MEDIA" if not project.get("poster") else ""
     if project.get("poster"):
@@ -219,6 +219,12 @@ def main():
 
     for lang, page in (("de", SITE / "arbeiten.html"), ("en", SITE / "en" / "work.html")):
         block = "\n".join(card(p, lang) for p in published)
+        replace_between_markers(page, block)
+
+    # Startseite zeigt nur die hervorgehobenen Projekte — kuratiert, nicht alles.
+    featured = [p for p in published if p.get("featured")] or published
+    for lang, page in (("de", SITE / "index.html"), ("en", SITE / "en" / "index.html")):
+        block = "\n".join(card(p, lang, prefix="") for p in featured)
         replace_between_markers(page, block)
 
     domain = data.get("_config", {}).get("domain", "").rstrip("/")

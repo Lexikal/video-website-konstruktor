@@ -470,6 +470,10 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .pillar{ border-top:1px solid var(--line); padding-top:var(--s-4); }
 .pillar h3{ font-family:var(--display); font-weight:800; text-transform:uppercase; font-size:1.05rem; letter-spacing:-.01em; margin:0 0 var(--s-2); }
 .pillar p{ margin:0; color:var(--muted); font-size:.9rem; }
+/* Nummer im Leistungs-Teaser auf der Startseite */
+.pillar .svc-no{ display:block; margin-bottom:var(--s-2); }
+/* Anker-Sprungziele nicht unter die fixierte Kopfzeile schieben */
+[id]{ scroll-margin-top:90px; }
 
 /* ---------- Preise ---------- */
 .price{
