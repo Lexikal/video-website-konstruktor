@@ -502,6 +502,10 @@ details.faq summary::after{
 }
 details.faq[open] summary::after{ content:"–"; }
 details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
+/* Gruppen im FAQ: eigener Container, damit die Rahmenlinie je Gruppe
+   sauber unten abschließt (details:last-of-type wirkt pro Elternelement). */
+.faq-group + .faq-group{ margin-top:var(--s-7); }
+.faq-group > .kicker{ margin-bottom:var(--s-3); }
 
 /* ---------- Formular ---------- */
 .form{ display:grid; gap:var(--s-5); max-width:760px; }
