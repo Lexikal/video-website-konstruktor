@@ -116,8 +116,16 @@
     var lbTitle = $('.lightbox-title', lightbox);
     var lbMeta = $('.lightbox-meta', lightbox);
     var lbClose = $('.lightbox-close', lightbox);
+    var lbBadge = $('.lightbox-badge', lightbox);
     var openFrom = function (card) {
-      lightbox.dataset.glow = card.dataset.mode || 'real';
+      /* Kennzeichnung von der Karte übernehmen — so bleibt sie in beiden
+         Sprachen identisch und kann nicht auseinanderlaufen. */
+      if (lbBadge) {
+        var src = card.querySelector('.badge-real, .badge-ki, .badge-hy');
+        lbBadge.className = 'lightbox-badge ' + (src ? src.className : '');
+        lbBadge.textContent = src ? src.textContent : '';
+        lbBadge.hidden = !src;
+      }
       if (lbTitle) lbTitle.textContent = card.dataset.title || '';
       if (lbMeta) lbMeta.textContent = card.dataset.meta || '';
       var hasVideo = !!(card.dataset.video);
@@ -188,6 +196,9 @@
   /* ---- Projektanfrage → E-Mail (kein Server, keine Datenweitergabe) ---- */
   var form = $('#brief');
   if (form) {
+    /* novalidate erst jetzt setzen: fällt JS aus, greift die native
+       Browser-Validierung und der mailto-action als Fallback. */
+    form.setAttribute('novalidate', '');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (form.querySelector('.hp input').value) return;           /* Honeypot */

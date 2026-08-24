@@ -55,7 +55,7 @@
 </div>
 <div>
 <h2 class="display" style="font-size:1.4rem;margin-bottom:20px">Projektanfrage</h2>
-<form class="form" id="brief" data-mail="{{MAIL}}" data-subject="Projektanfrage" data-fields="name:Name|email:E-Mail|company:Unternehmen|website:Website oder Instagram|art:Vorhaben|leistung:Benötigt|termin:Zeitrahmen|budget:Budget|beschreibung:Beschreibung|referenz:Referenzen" novalidate>
+<form class="form" id="brief" data-mail="{{MAIL}}" data-subject="Projektanfrage" data-fields="name:Name|email:E-Mail|company:Unternehmen|website:Website oder Instagram|art:Vorhaben|leistung:Benötigt|termin:Zeitrahmen|budget:Budget|beschreibung:Beschreibung|referenz:Referenzen" action="mailto:{{MAIL}}" method="post" enctype="text/plain">
   <div class="hp" aria-hidden="true"><label for="hp">Nicht ausfüllen</label><input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off"></div>
   <div class="field"><label for="f-name">Name *</label><input id="f-name" name="name" type="text" required autocomplete="name"></div>
   <div class="field"><label for="f-mail">E-Mail *</label><input id="f-mail" name="email" type="email" required autocomplete="email"></div>
@@ -94,6 +94,9 @@
   <label class="consent"><input type="checkbox" required id="f-ok">
     <span>Ich habe die <a href="datenschutz.html" style="color:var(--real)">Datenschutzhinweise</a> gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung meiner Anfrage einverstanden. *</span></label>
   <button class="btn" type="submit">Anfrage senden</button>
+  <noscript>
+    <p class="form-note" style="border-left:3px solid var(--real);padding-left:14px">Dieses Formular braucht JavaScript, um Ihr E-Mail-Programm zu öffnen. Schreiben Sie mir stattdessen direkt an <a href="mailto:{{MAIL}}">{{MAIL}}</a> oder rufen Sie an: <a href="tel:{{TEL_RAW}}">{{TEL}}</a>.</p>
+  </noscript>
   <p class="form-note">Beim Absenden öffnet sich Ihr E-Mail-Programm mit den ausgefüllten Angaben. Es werden keine Daten an Dritte übertragen und nichts auf dieser Website gespeichert.</p>
   <p id="sent" class="form-note" hidden style="color:var(--real)">Ihr E-Mail-Programm sollte sich jetzt geöffnet haben. Falls nicht, schreiben Sie bitte direkt an {{MAIL}}.</p>
 </form>

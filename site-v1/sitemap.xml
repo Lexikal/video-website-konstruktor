@@ -126,4 +126,48 @@
     <lastmod>{{STAND_ISO}}</lastmod>
     <priority>0.6</priority>
   </url>
+  <!-- PROJEKTE:START -->
+  <url>
+    <loc>{{DOMAIN}}/projekte/fashion-kampagne-studio.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/fashion-kampagne-studio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/fashion-kampagne-studio.html"/>
+    <lastmod>{{STAND_ISO}}</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{DOMAIN}}/en/projects/fashion-kampagne-studio.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/fashion-kampagne-studio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/fashion-kampagne-studio.html"/>
+    <lastmod>{{STAND_ISO}}</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{DOMAIN}}/projekte/beauty-wettbewerb.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/beauty-wettbewerb.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/beauty-wettbewerb.html"/>
+    <lastmod>{{STAND_ISO}}</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{DOMAIN}}/en/projects/beauty-wettbewerb.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/beauty-wettbewerb.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/beauty-wettbewerb.html"/>
+    <lastmod>{{STAND_ISO}}</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{DOMAIN}}/projekte/produkt-anzeigenvarianten.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/produkt-anzeigenvarianten.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/produkt-anzeigenvarianten.html"/>
+    <lastmod>{{STAND_ISO}}</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{DOMAIN}}/en/projects/produkt-anzeigenvarianten.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/produkt-anzeigenvarianten.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/produkt-anzeigenvarianten.html"/>
+    <lastmod>{{STAND_ISO}}</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <!-- PROJEKTE:END -->
 </urlset>

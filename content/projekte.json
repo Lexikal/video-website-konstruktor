@@ -1,0 +1,138 @@
+{
+  "_hinweis": [
+    "Einzige Quelle der Wahrheit für alle Projektseiten und die Karten auf Arbeiten/Work.",
+    "Nach jeder Änderung ausführen:  python3 tools/build-projects.py",
+    "Das Skript erzeugt site-v1/projekte/<slug>.html und site-v1/en/projects/<slug>.html",
+    "und ersetzt die Kartenliste zwischen den PROJEKTE-Markern in arbeiten.html / en/work.html.",
+    "",
+    "draft: true  = Projekt wird NICHT veröffentlicht (keine Seite, keine Karte).",
+    "               So bleibt die Auswahl kuratiert, statt Platzhalter zu indexieren.",
+    "mode: real | ki | hy  = Produktionsweise. Steuert die Kennzeichnung nach Art. 50 KI-VO.",
+    "video/poster/stills  = Pfade relativ zu site-v1/ ; leer lassen, solange kein Material da ist.",
+    "Personen erkennbar im Bild? Erst nach unterschriebenem Model Release veröffentlichen",
+    "(Vorlage: compliance/Model-Release.md)."
+  ],
+
+  "projekte": [
+    {
+      "slug": "fashion-kampagne-studio",
+      "draft": false,
+      "featured": true,
+      "jahr": "2026",
+      "mode": "hy",
+      "kunde": "",
+      "video": "",
+      "poster": "",
+      "stills": [],
+      "de": {
+        "titel": "Projektname 01",
+        "kategorie": "Fashion · Kampagne",
+        "rolle": "Konzept, Kamera, Schnitt, Farbe",
+        "aufgabe": "Kampagnenmaterial für eine Kollektion — bei begrenztem Budget und ohne Reisebudget für eine Auslandslocation.",
+        "ansatz": "Ein Drehtag im Studio mit echtem Model und echten Kleidungsstücken. Die Umgebung wurde anschließend generativ ergänzt und farblich an das Studiolicht angeglichen.",
+        "ergebnis": "Hauptfilm, sechs vertikale Fassungen und ein Stills-Set für Lookbook und Social Media."
+      },
+      "en": {
+        "titel": "Project 01",
+        "kategorie": "Fashion · campaign",
+        "rolle": "Concept, camera, edit, colour",
+        "aufgabe": "Campaign material for a collection — on a limited budget and without the travel budget for an overseas location.",
+        "ansatz": "One studio shooting day with a real model and real garments. The surroundings were then extended generatively and matched to the studio light.",
+        "ergebnis": "Main film, six vertical versions and a stills set for lookbook and social media."
+      }
+    },
+    {
+      "slug": "beauty-wettbewerb",
+      "draft": false,
+      "featured": true,
+      "jahr": "2025",
+      "mode": "real",
+      "kunde": "",
+      "video": "",
+      "poster": "",
+      "stills": [],
+      "de": {
+        "titel": "Projektname 02",
+        "kategorie": "Beauty · Wettbewerb",
+        "rolle": "Kamera, Schnitt, Farbe",
+        "aufgabe": "Dokumentation eines Beauty-Wettbewerbs: Bühne, Backstage, Detailaufnahmen — in einem Durchlauf, ohne Wiederholung.",
+        "ansatz": "Zwei Kameras, mobiles Licht, Makroobjektiv für Detailaufnahmen. Vollständig real gedreht, ohne generative Anteile.",
+        "ergebnis": "Wettbewerbsfilm, Kurzfassungen für Teilnehmerinnen und Bildmaterial für Presse und Veranstalter."
+      },
+      "en": {
+        "titel": "Project 02",
+        "kategorie": "Beauty · competition",
+        "rolle": "Camera, edit, colour",
+        "aufgabe": "Documenting a beauty competition: stage, backstage, close-ups — in a single run, with no second take.",
+        "ansatz": "Two cameras, mobile lighting, macro lens for the close-ups. Shot entirely for real, with no generative elements.",
+        "ergebnis": "Competition film, short versions for the participants, and stills for press and organisers."
+      }
+    },
+    {
+      "slug": "produkt-anzeigenvarianten",
+      "draft": false,
+      "featured": true,
+      "jahr": "2026",
+      "mode": "hy",
+      "kunde": "",
+      "video": "",
+      "poster": "",
+      "stills": [],
+      "de": {
+        "titel": "Projektname 03",
+        "kategorie": "Produkt · Werbung",
+        "rolle": "Konzept, Makro-Kamera, generative Produktion, Farbe",
+        "aufgabe": "Ein Produkt, viele Anzeigenvarianten für unterschiedliche Zielgruppen und Plattformen.",
+        "ansatz": "Makroaufnahmen des echten Produkts als Basis. Umgebungen, Lichtstimmungen und Kamerabewegungen generativ erzeugt und einheitlich gegradet.",
+        "ergebnis": "Zwölf Anzeigenfassungen in drei Seitenverhältnissen aus einem halben Drehtag."
+      },
+      "en": {
+        "titel": "Project 03",
+        "kategorie": "Product · advertising",
+        "rolle": "Concept, macro camera, generative production, colour",
+        "aufgabe": "One product, many ad versions for different audiences and platforms.",
+        "ansatz": "Macro footage of the real product as the base. Environments, lighting moods and camera moves generated, then graded to one look.",
+        "ergebnis": "Twelve ad versions in three aspect ratios out of half a shooting day."
+      }
+    },
+    {
+      "slug": "marke-imagefilm",
+      "draft": true,
+      "featured": false,
+      "jahr": "",
+      "mode": "real",
+      "kunde": "",
+      "video": "",
+      "poster": "",
+      "stills": [],
+      "de": { "titel": "", "kategorie": "Marke · Imagefilm", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" },
+      "en": { "titel": "", "kategorie": "Brand · image film", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" }
+    },
+    {
+      "slug": "portrait-interview",
+      "draft": true,
+      "featured": false,
+      "jahr": "",
+      "mode": "real",
+      "kunde": "",
+      "video": "",
+      "poster": "",
+      "stills": [],
+      "de": { "titel": "", "kategorie": "Portrait · Interview", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" },
+      "en": { "titel": "", "kategorie": "Portrait · interview", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" }
+    },
+    {
+      "slug": "event-doku",
+      "draft": true,
+      "featured": false,
+      "jahr": "",
+      "mode": "real",
+      "kunde": "",
+      "video": "",
+      "poster": "",
+      "stills": [],
+      "de": { "titel": "", "kategorie": "Event · Doku", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" },
+      "en": { "titel": "", "kategorie": "Event · documentary", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" }
+    }
+  ]
+}

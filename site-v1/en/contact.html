@@ -52,7 +52,7 @@
 </div>
 <p class="form-note" style="margin-top:24px">Based in {{STADT}}. Shooting across Germany and Europe. German, English or Russian.</p></div>
 <div><h2 class="display" style="font-size:1.4rem;margin-bottom:20px">Project brief</h2>
-<form class="form" id="brief" data-mail="{{MAIL}}" data-subject="Project enquiry" data-fields="name:Name|email:Email|company:Company|website:Website or Instagram|art:Project type|leistung:Needed|termin:Timeline|budget:Budget|beschreibung:Description|referenz:References" novalidate>
+<form class="form" id="brief" data-mail="{{MAIL}}" data-subject="Project enquiry" data-fields="name:Name|email:Email|company:Company|website:Website or Instagram|art:Project type|leistung:Needed|termin:Timeline|budget:Budget|beschreibung:Description|referenz:References" action="mailto:{{MAIL}}" method="post" enctype="text/plain">
   <div class="hp" aria-hidden="true"><label for="hp">Leave empty</label><input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off"></div>
   <div class="field"><label for="f-name">Name *</label><input id="f-name" name="name" type="text" required autocomplete="name"></div>
   <div class="field"><label for="f-mail">Email *</label><input id="f-mail" name="email" type="email" required autocomplete="email"></div>
@@ -87,6 +87,9 @@
   <label class="consent"><input type="checkbox" required id="f-ok">
     <span>I have read the <a href="privacy.html" style="color:var(--real)">privacy notice</a> and agree that my details may be processed to answer my enquiry. *</span></label>
   <button class="btn" type="submit">Send enquiry</button>
+  <noscript>
+    <p class="form-note" style="border-left:3px solid var(--real);padding-left:14px">This form needs JavaScript to open your email client. Please write to <a href="mailto:{{MAIL}}">{{MAIL}}</a> directly, or call <a href="tel:{{TEL_RAW}}">{{TEL}}</a>.</p>
+  </noscript>
   <p class="form-note">Submitting opens your email client with the details filled in. No data is sent to third parties and nothing is stored on this website.</p>
   <p id="sent" class="form-note" hidden style="color:var(--real)">Your email client should have opened. If not, please write to {{MAIL}}.</p>
 </form></div></div></div></section>

@@ -1,11 +1,16 @@
 /* =========================================================
    Design system
-   Konzept: Farbtemperatur als Metapher.
-   WARM (Tungsten #FF9E4D) = real gedreht.
-   KALT (#7B61FF)          = generativ erzeugt.
-   Die Farbe ist nie Dekoration — sie sagt immer aus,
-   wie ein Bild entstanden ist. Das ist zugleich die
-   visuelle Basis der KI-Kennzeichnung (Art. 50 KI-VO).
+   Konzept: Farbtemperatur als Metapher — aus der Kameraarbeit,
+   nicht aus der Dekoration.
+   WARM (Tungsten 3200K, #FF9E4D)  = real gedreht.
+   KALT (Tageslicht 5600K, #5BA8D9) = generativ erzeugt.
+   Beide Temperaturen existieren am Set wirklich; deshalb kein
+   Violett, das als generischer KI-Akzent gelesen wird.
+   Die Farbe ist nie Dekoration — sie sagt immer aus, wie ein Bild
+   entstanden ist, und ist zugleich die visuelle Basis der
+   KI-Kennzeichnung (Art. 50 KI-VO). Sie sitzt deshalb auf der
+   Kennzeichnung selbst, nicht auf Rahmen, Flächen oder Glows —
+   Farbe im Bild kommt aus der Aufnahme, nicht aus dem Interface.
    ========================================================= */
 
 :root{
@@ -15,7 +20,7 @@
   --paper:    #EDEAE4;
   --muted:    #918C85;
   --real:     #FF9E4D;
-  --ki:       #7B61FF;
+  --ki:       #5BA8D9;
   --line:     rgba(237,234,228,.14);
   --line-2:   rgba(237,234,228,.28);
 
@@ -182,8 +187,8 @@ h2.display{ font-size:var(--t-h2); }
 .hero-fallback{
   position:absolute; inset:0;
   background:
-    radial-gradient(60% 55% at 22% 18%, rgba(255,158,77,.30), transparent 62%),
-    radial-gradient(55% 50% at 82% 74%, rgba(123,97,255,.32), transparent 60%),
+    radial-gradient(60% 55% at 22% 18%, rgba(255,158,77,.26), transparent 62%),
+    radial-gradient(55% 50% at 82% 74%, rgba(91,168,217,.24), transparent 60%),
     var(--ink-2);
 }
 .hero .wrap{ position:relative; z-index:1; width:100%; }
@@ -229,14 +234,13 @@ h2.display{ font-size:var(--t-h2); }
   background:var(--ink-2); position:relative; overflow:hidden;
   transition:border-color .3s var(--ease), transform .4s var(--ease);
 }
-.mode:hover{ transform:translateY(-4px); }
 .mode::before{ content:""; position:absolute; inset:0 0 auto 0; height:3px; }
 .mode--real::before{ background:var(--real); }
 .mode--ki::before{ background:var(--ki); }
 .mode--hy::before{ background:linear-gradient(90deg,var(--real),var(--ki)); }
-.mode--real:hover{ border-color:rgba(255,158,77,.55); }
-.mode--ki:hover{ border-color:rgba(123,97,255,.55); }
-.mode--hy{ background:linear-gradient(160deg, rgba(255,158,77,.07), rgba(123,97,255,.09)), var(--ink-2); }
+/* Farbe bleibt auf der 3px-Kante oben (= die Kennzeichnung), nicht auf
+   Rahmen oder Fläche der Karte. */
+.mode:hover{ transform:translateY(-4px); border-color:var(--line-2); }
 .mode h3{ font-family:var(--display); font-weight:800; text-transform:uppercase; font-size:1.5rem; letter-spacing:-.02em; margin:var(--s-4) 0 var(--s-3); }
 .mode ul{ list-style:none; margin:var(--s-4) 0 0; padding:0; font-size:.9rem; color:var(--muted); }
 .mode li{ padding:7px 0; border-bottom:1px solid var(--line); }
@@ -276,7 +280,7 @@ h2.display{ font-size:var(--t-h2); }
 .compare-layer img{ width:100%; height:100%; object-fit:cover; }
 .compare-ph{ position:absolute; inset:0; display:grid; place-items:end center; padding-bottom:16%; }
 .compare-ph--real{ background:linear-gradient(140deg,#2A2118,#0F0E0C 70%); }
-.compare-ph--ki{ background:linear-gradient(140deg,#221C3D,#0D0C14 70%); }
+.compare-ph--ki{ background:linear-gradient(140deg,#16242D,#0D0C14 70%); }
 .compare-ph span{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
 .compare-top{ clip-path:inset(0 0 0 50%); }
 .compare-handle{
@@ -307,7 +311,7 @@ h2.display{ font-size:var(--t-h2); }
    bleibt das Video sichtbar. */
 .bg-video, .bg-video-fallback{ position:fixed; inset:0; width:100%; height:100%; z-index:-2; pointer-events:none; }
 .bg-video{ object-fit:cover; }
-.bg-video-fallback{ display:none; background:linear-gradient(160deg,#221C3D,var(--ink) 65%); }
+.bg-video-fallback{ display:none; background:linear-gradient(160deg,#16242D,var(--ink) 65%); }
 body.page--video-bg-fallback .bg-video{ display:none; }
 body.page--video-bg-fallback .bg-video-fallback{ display:block; }
 .bg-video-vignette{
@@ -357,11 +361,9 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .lightbox{
   border:1px solid var(--line-2); background:var(--ink-2); color:var(--paper);
   padding:0; width:min(920px,92vw); max-height:88vh; overflow:auto;
-  box-shadow:0 0 0 1px var(--ink), 0 0 60px 4px var(--real);
+  box-shadow:0 0 0 1px var(--ink), 0 40px 80px -30px rgba(0,0,0,.9);
   opacity:1; transform:scale(1); transition:opacity .28s var(--ease), transform .28s var(--ease), overlay .28s allow-discrete, display .28s allow-discrete;
 }
-.lightbox[data-glow="ki"]{ box-shadow:0 0 0 1px var(--ink), 0 0 60px 4px var(--ki); }
-.lightbox[data-glow="hy"]{ box-shadow:0 0 0 1px var(--ink), 0 0 50px 4px var(--real), 0 0 50px 4px var(--ki); }
 .lightbox::backdrop{ background:rgba(11,11,13,0); transition:background .28s var(--ease), overlay .28s allow-discrete, display .28s allow-discrete; }
 .lightbox[open]::backdrop{ background:rgba(11,11,13,.86); }
 @starting-style{
@@ -377,10 +379,13 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .lightbox-video{ width:100%; height:100%; object-fit:cover; display:block; }
 .lightbox-ph{
   position:absolute; inset:0; display:grid; place-items:center;
-  background:linear-gradient(145deg, rgba(255,158,77,.14), rgba(123,97,255,.16)), var(--ink-3);
+  background:linear-gradient(145deg, rgba(237,234,228,.05), rgba(237,234,228,.02)), var(--ink-3);
   font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; color:var(--muted);
 }
 .lightbox-txt{ padding:var(--s-5) var(--s-6) var(--s-6); }
+/* Die Kennzeichnung wird von der Karte geklont und behält deren Farbe —
+   hier aber im Textfluss statt absolut über dem Bild. */
+.lightbox-badge{ position:static; display:inline-block; margin-bottom:var(--s-3); }
 .lightbox-title{
   font-family:var(--display); font-weight:800; text-transform:uppercase;
   font-size:1.5rem; letter-spacing:-.02em; margin:var(--s-2) 0 var(--s-4);
@@ -393,12 +398,59 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .card:hover .card-media img{ transform:scale(1.04); }
 .card-ph{
   position:absolute; inset:0; display:grid; place-items:center;
-  background:linear-gradient(145deg, rgba(255,158,77,.14), rgba(123,97,255,.16)), var(--ink-3);
+  background:linear-gradient(145deg, rgba(237,234,228,.05), rgba(237,234,228,.02)), var(--ink-3);
   font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; color:var(--muted);
 }
 .card-txt{ padding:var(--s-5); }
 .card-txt h3{ font-family:var(--display); font-weight:800; text-transform:uppercase; font-size:1.25rem; letter-spacing:-.02em; margin:var(--s-2) 0; }
 .card-txt p{ margin:0; font-size:.88rem; color:var(--muted); }
+
+/* ---------- Projektseite ----------
+   Rhythmus statt gleichmäßigem Raster: großes Bild → Text → Luft → Bilderpaar.
+   Die Stills-Reihe wechselt bewusst die Größe, damit die Seite wie ein
+   Schnitt gelesen wird und nicht wie eine Galerie. */
+.proj-media{ position:relative; aspect-ratio:16/9; background:var(--ink-3); overflow:hidden; border:1px solid var(--line); }
+.proj-media video, .proj-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+.proj-meta{
+  display:grid; grid-template-columns:1fr; gap:var(--s-4);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding-block:var(--s-5); margin-top:var(--s-6);
+}
+.proj-meta div{ display:flex; flex-direction:column; gap:6px; }
+.proj-meta dt, .proj-meta .lbl{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted);
+}
+.proj-meta .val{ font-size:.95rem; color:var(--paper); }
+.proj-block{ max-width:62ch; margin-top:var(--s-7); }
+.proj-block h2{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--muted); font-weight:400; margin:0 0 var(--s-3);
+}
+.proj-block p{ margin:0; font-size:clamp(1rem,1.6vw,1.15rem); line-height:1.6; }
+.proj-stills{ display:grid; gap:var(--s-4); margin-top:var(--s-8); }
+.proj-still{ background:var(--ink-3); border:1px solid var(--line); overflow:hidden; }
+.proj-still img{ width:100%; height:auto; display:block; }
+.proj-next{
+  display:flex; align-items:baseline; justify-content:space-between; gap:var(--s-5);
+  border-top:1px solid var(--line); padding-top:var(--s-6); margin-top:var(--s-9);
+  text-decoration:none; flex-wrap:wrap;
+}
+.proj-next:hover .proj-next-title{ color:var(--real); }
+.proj-next-title{
+  font-family:var(--display); font-weight:800; text-transform:uppercase;
+  font-size:clamp(1.4rem,4vw,2.4rem); letter-spacing:-.03em;
+  transition:color .3s var(--ease);
+}
+@media (min-width:640px){
+  .proj-meta{ grid-template-columns:repeat(2,1fr); gap:var(--s-5); }
+  /* Bilderpaar: das erste Still bleibt breit, danach paarweise */
+  .proj-stills{ grid-template-columns:repeat(2,1fr); }
+  .proj-still:first-child{ grid-column:1 / -1; }
+}
+@media (min-width:900px){
+  .proj-meta{ grid-template-columns:repeat(4,1fr); }
+}
 
 /* ---------- Ablauf ---------- */
 .steps{ list-style:none; margin:0; padding:0; counter-reset:step; }
@@ -507,9 +559,14 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
 }
 .todo code{ font-family:var(--mono); color:var(--real); font-size:.9em; }
 
-/* ---------- Reveal-Animation ---------- */
-.rv{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
-.rv.in{ opacity:1; transform:none; }
+/* ---------- Reveal-Animation ----------
+   Nur verstecken, wenn JavaScript den Inhalt auch wieder einblenden kann.
+   Ohne JS (oder in Browsern, die die Abfrage nicht kennen) greift die Regel
+   nicht und der Text ist sofort lesbar — Inhalt darf nie von JS abhängen. */
+@media (scripting: enabled){
+  .rv{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  .rv.in{ opacity:1; transform:none; }
+}
 
 /* ---------- Breakpoints ---------- */
 @media (min-width:640px){
