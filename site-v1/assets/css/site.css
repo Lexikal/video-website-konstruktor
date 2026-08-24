@@ -502,6 +502,21 @@ details.faq summary::after{
 }
 details.faq[open] summary::after{ content:"–"; }
 details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
+/* ---------- Zwei Seiten desselben Tisches (FAQ-Seite) ----------
+   Links der Satz, wie er im Gespräch fällt, rechts was dahintersteckt.
+   Bewusst ohne Farbe: warm/kalt bedeutet auf dieser Website real/generativ
+   und darf hier nichts anderes heißen. Die Trennung macht die Typografie. */
+.side{ display:grid; gap:var(--s-3); padding-block:var(--s-6); border-top:1px solid var(--line); }
+.side:last-of-type{ border-bottom:1px solid var(--line); }
+.side-q{
+  font-family:var(--display); font-weight:800; text-transform:uppercase;
+  font-size:clamp(1.05rem,2.2vw,1.45rem); letter-spacing:-.02em; line-height:1.15; margin:0;
+}
+.side-a{ margin:0; color:var(--muted); max-width:64ch; }
+@media (min-width:900px){
+  .side{ grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:var(--s-6); align-items:start; }
+}
+
 /* Gruppen im FAQ: eigener Container, damit die Rahmenlinie je Gruppe
    sauber unten abschließt (details:last-of-type wirkt pro Elternelement). */
 .faq-group + .faq-group{ margin-top:var(--s-7); }

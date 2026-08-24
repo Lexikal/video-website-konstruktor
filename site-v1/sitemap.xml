@@ -126,6 +126,20 @@
     <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://lexikal.github.io/video-website-konstruktor/faq.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/faq.html"/>
+    <lastmod>2026-08-23</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/faq.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/faq.html"/>
+    <lastmod>2026-08-23</lastmod>
+    <priority>0.8</priority>
+  </url>
   <!-- PROJEKTE:START -->
   <url>
     <loc>https://lexikal.github.io/video-website-konstruktor/projekte/fashion-kampagne-studio.html</loc>
