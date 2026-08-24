@@ -1,172 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>{{DOMAIN}}/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/index.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/index.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/index.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/index.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/index.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/index.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/index.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/index.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/leistungen.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/leistungen.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/services.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/leistungen.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/leistungen.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/services.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/leistungen.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/services.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/services.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/leistungen.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/services.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/arbeiten.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/arbeiten.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/work.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/arbeiten.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/arbeiten.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/work.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/work.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/arbeiten.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/work.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/work.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/arbeiten.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/work.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/labor.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/labor.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/lab.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/labor.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/labor.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/lab.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/lab.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/labor.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/lab.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/lab.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/labor.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/lab.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/ueber-mich.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/ueber-mich.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/about.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/ueber-mich.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/ueber-mich.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/about.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/about.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/ueber-mich.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/about.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/about.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/ueber-mich.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/about.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/kontakt.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/kontakt.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/contact.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/kontakt.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/kontakt.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/contact.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/kontakt.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/contact.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/contact.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/kontakt.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/contact.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/impressum.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/impressum.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/imprint.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/impressum.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/impressum.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/imprint.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/imprint.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/impressum.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/imprint.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/imprint.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/impressum.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/imprint.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/datenschutz.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/datenschutz.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/privacy.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/datenschutz.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/datenschutz.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/privacy.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/privacy.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/datenschutz.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/privacy.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/datenschutz.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/privacy.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/barrierefreiheit.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/barrierefreiheit.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/accessibility.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/barrierefreiheit.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/barrierefreiheit.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/accessibility.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/accessibility.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/barrierefreiheit.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/accessibility.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/accessibility.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/barrierefreiheit.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/accessibility.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.6</priority>
   </url>
   <!-- PROJEKTE:START -->
   <url>
-    <loc>{{DOMAIN}}/projekte/fashion-kampagne-studio.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/fashion-kampagne-studio.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/fashion-kampagne-studio.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/projekte/fashion-kampagne-studio.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/fashion-kampagne-studio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/fashion-kampagne-studio.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/projects/fashion-kampagne-studio.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/fashion-kampagne-studio.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/fashion-kampagne-studio.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/projects/fashion-kampagne-studio.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/fashion-kampagne-studio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/fashion-kampagne-studio.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/projekte/beauty-wettbewerb.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/beauty-wettbewerb.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/beauty-wettbewerb.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/projekte/beauty-wettbewerb.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/beauty-wettbewerb.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/beauty-wettbewerb.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/projects/beauty-wettbewerb.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/beauty-wettbewerb.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/beauty-wettbewerb.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/projects/beauty-wettbewerb.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/beauty-wettbewerb.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/beauty-wettbewerb.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/projekte/produkt-anzeigenvarianten.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/produkt-anzeigenvarianten.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/produkt-anzeigenvarianten.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/projekte/produkt-anzeigenvarianten.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/produkt-anzeigenvarianten.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/produkt-anzeigenvarianten.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>{{DOMAIN}}/en/projects/produkt-anzeigenvarianten.html</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="{{DOMAIN}}/projekte/produkt-anzeigenvarianten.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="{{DOMAIN}}/en/projects/produkt-anzeigenvarianten.html"/>
-    <lastmod>{{STAND_ISO}}</lastmod>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/projects/produkt-anzeigenvarianten.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/produkt-anzeigenvarianten.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/produkt-anzeigenvarianten.html"/>
+    <lastmod>2026-08-23</lastmod>
     <priority>0.8</priority>
   </url>
   <!-- PROJEKTE:END -->

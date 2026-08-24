@@ -13,6 +13,17 @@
     "(Vorlage: compliance/Model-Release.md)."
   ],
 
+  "_config": {
+    "_hinweis_domain": [
+      "Wird für canonical, hreflang, og:url und sitemap der erzeugten Seiten benutzt.",
+      "Bei eigener Domain hier ändern UND einmalig über die statischen Seiten laufen lassen:",
+      "  LC_ALL=C find site-v1 -type f \\( -name '*.html' -o -name '*.xml' -o -name '*.txt' \\) \\",
+      "    -exec sed -i '' 's|ALTE-DOMAIN|NEUE-DOMAIN|g' {} +",
+      "  python3 tools/build-projects.py"
+    ],
+    "domain": "https://lexikal.github.io/video-website-konstruktor"
+  },
+
   "projekte": [
     {
       "slug": "fashion-kampagne-studio",

@@ -15,6 +15,7 @@ statisch: die erzeugten Dateien werden committet, der Build läuft nicht
 beim Deploy.
 """
 
+import datetime
 import html
 import json
 import pathlib
@@ -144,29 +145,29 @@ def card(project, lang):
     )
 
 
-def sitemap_entries(published):
+def sitemap_entries(published, domain):
     """Sitemap-Einträge für alle veröffentlichten Projekte, beide Sprachen."""
     out = []
     for p in published:
-        de = f"{{{{DOMAIN}}}}/projekte/{p['slug']}.html"
-        en = f"{{{{DOMAIN}}}}/en/projects/{p['slug']}.html"
+        de = f"{domain}/projekte/{p['slug']}.html"
+        en = f"{domain}/en/projects/{p['slug']}.html"
         for loc in (de, en):
             out.append(
                 "  <url>\n"
                 f"    <loc>{loc}</loc>\n"
                 f'    <xhtml:link rel="alternate" hreflang="de" href="{de}"/>\n'
                 f'    <xhtml:link rel="alternate" hreflang="en" href="{en}"/>\n'
-                "    <lastmod>{{STAND_ISO}}</lastmod>\n"
+                f"    <lastmod>{datetime.date.today().isoformat()}</lastmod>\n"
                 "    <priority>0.8</priority>\n"
                 "  </url>"
             )
     return "\n".join(out)
 
 
-def update_sitemap(published):
+def update_sitemap(published, domain):
     path = SITE / "sitemap.xml"
     source = path.read_text(encoding="utf-8")
-    block = f"{SITEMAP_START}\n{sitemap_entries(published)}\n{SITEMAP_END}"
+    block = f"{SITEMAP_START}\n{sitemap_entries(published, domain)}\n{SITEMAP_END}"
     if SITEMAP_START in source and SITEMAP_END in source:
         pattern = re.compile(
             re.escape(SITEMAP_START) + ".*?" + re.escape(SITEMAP_END), re.DOTALL
@@ -220,7 +221,10 @@ def main():
         block = "\n".join(card(p, lang) for p in published)
         replace_between_markers(page, block)
 
-    update_sitemap(published)
+    domain = data.get("_config", {}).get("domain", "").rstrip("/")
+    if not domain:
+        sys.exit("FEHLER: _config.domain fehlt in content/projekte.json.")
+    update_sitemap(published, domain)
 
     drafts = len(data["projekte"]) - len(published)
     print(f"{written} Projektseiten erzeugt ({len(published)} Projekte x 2 Sprachen).")
