@@ -4,6 +4,7 @@
     "Nach jeder Änderung ausführen:  python3 tools/build-projects.py",
     "Das Skript erzeugt site-v1/projekte/<slug>.html und site-v1/en/projects/<slug>.html",
     "und ersetzt die Kartenliste zwischen den PROJEKTE-Markern in arbeiten.html / en/work.html.",
+    "orientation: landscape (Standard) | portrait | square — Seitenverhaeltnis des Videos/Bildes. landscape = Interview, Event, breite Location. portrait = Hochzeit-Reel, Social-Vertikal, Detail-/Makro-Nahaufnahme, die hochkant gedreht wurde. square = Instagram-Feed-Format. Steuert automatisch die Groesse des Media-Containers auf Projektseite und in der Karte — kein manuelles CSS noetig.",
     "",
     "draft: true  = Projekt wird NICHT veröffentlicht (keine Seite, keine Karte).",
     "               So bleibt die Auswahl kuratiert, statt Platzhalter zu indexieren.",
@@ -12,7 +13,6 @@
     "Personen erkennbar im Bild? Erst nach unterschriebenem Model Release veröffentlichen",
     "(Vorlage: compliance/Model-Release.md)."
   ],
-
   "_config": {
     "_hinweis_domain": [
       "Wird für canonical, hreflang, og:url und sitemap der erzeugten Seiten benutzt.",
@@ -23,7 +23,6 @@
     ],
     "domain": "https://lexikal.github.io/video-website-konstruktor"
   },
-
   "projekte": [
     {
       "slug": "fashion-kampagne-studio",
@@ -31,6 +30,7 @@
       "featured": true,
       "jahr": "2026",
       "mode": "hy",
+      "orientation": "landscape",
       "kunde": "",
       "video": "",
       "poster": "",
@@ -58,6 +58,7 @@
       "featured": true,
       "jahr": "2025",
       "mode": "real",
+      "orientation": "landscape",
       "kunde": "",
       "video": "",
       "poster": "",
@@ -85,6 +86,7 @@
       "featured": true,
       "jahr": "2026",
       "mode": "hy",
+      "orientation": "landscape",
       "kunde": "",
       "video": "",
       "poster": "",
@@ -112,12 +114,27 @@
       "featured": false,
       "jahr": "",
       "mode": "real",
+      "orientation": "landscape",
       "kunde": "",
       "video": "",
       "poster": "",
       "stills": [],
-      "de": { "titel": "", "kategorie": "Marke · Imagefilm", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" },
-      "en": { "titel": "", "kategorie": "Brand · image film", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" }
+      "de": {
+        "titel": "",
+        "kategorie": "Marke · Imagefilm",
+        "rolle": "",
+        "aufgabe": "",
+        "ansatz": "",
+        "ergebnis": ""
+      },
+      "en": {
+        "titel": "",
+        "kategorie": "Brand · image film",
+        "rolle": "",
+        "aufgabe": "",
+        "ansatz": "",
+        "ergebnis": ""
+      }
     },
     {
       "slug": "portrait-interview",
@@ -125,12 +142,27 @@
       "featured": false,
       "jahr": "",
       "mode": "real",
+      "orientation": "landscape",
       "kunde": "",
       "video": "",
       "poster": "",
       "stills": [],
-      "de": { "titel": "", "kategorie": "Portrait · Interview", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" },
-      "en": { "titel": "", "kategorie": "Portrait · interview", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" }
+      "de": {
+        "titel": "",
+        "kategorie": "Portrait · Interview",
+        "rolle": "",
+        "aufgabe": "",
+        "ansatz": "",
+        "ergebnis": ""
+      },
+      "en": {
+        "titel": "",
+        "kategorie": "Portrait · interview",
+        "rolle": "",
+        "aufgabe": "",
+        "ansatz": "",
+        "ergebnis": ""
+      }
     },
     {
       "slug": "event-doku",
@@ -138,12 +170,27 @@
       "featured": false,
       "jahr": "",
       "mode": "real",
+      "orientation": "landscape",
       "kunde": "",
       "video": "",
       "poster": "",
       "stills": [],
-      "de": { "titel": "", "kategorie": "Event · Doku", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" },
-      "en": { "titel": "", "kategorie": "Event · documentary", "rolle": "", "aufgabe": "", "ansatz": "", "ergebnis": "" }
+      "de": {
+        "titel": "",
+        "kategorie": "Event · Doku",
+        "rolle": "",
+        "aufgabe": "",
+        "ansatz": "",
+        "ergebnis": ""
+      },
+      "en": {
+        "titel": "",
+        "kategorie": "Event · documentary",
+        "rolle": "",
+        "aufgabe": "",
+        "ansatz": "",
+        "ergebnis": ""
+      }
     }
   ]
 }

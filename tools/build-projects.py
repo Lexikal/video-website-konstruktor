@@ -38,6 +38,14 @@ MODUS = {
 # ist, muss übersetzt werden — sonst steht Deutsch auf der englischen Seite.
 KUNDE_OFFEN = {"de": "Auf Anfrage", "en": "On request"}
 
+# Seitenverhaeltnis-Klasse fuer den Media-Container. "landscape" ist die
+# bisherige Groesse (16:9 auf der Projektseite, 4:5 in der Karte) und braucht
+# deshalb keine eigene Klasse.
+ORIENTATION_CLASS = {"landscape": "", "portrait": " proj-media--portrait",
+                      "square": " proj-media--square"}
+ORIENTATION_CARD_CLASS = {"landscape": "", "portrait": " card-media--portrait",
+                           "square": " card-media--square"}
+
 MARK_START = "<!-- PROJEKTE:START — erzeugt von tools/build-projects.py, nicht von Hand ändern -->"
 MARK_END = "<!-- PROJEKTE:END -->"
 
@@ -114,6 +122,8 @@ def build_page(project, nxt, lang, template):
     # Medienblöcke enthalten Markup, deshalb nach dem Escapen einsetzen.
     out = out.replace("%%HERO_MEDIA%%", hero_media(project, lang, depth))
     out = out.replace("%%STILLS%%", stills_block(project, depth, lang))
+    ori = ORIENTATION_CLASS.get(project.get("orientation", "landscape"), "")
+    out = out.replace('class="proj-media"', 'class="proj-media' + ori + '"')
     return out
 
 
@@ -135,9 +145,10 @@ def card(project, lang, prefix=""):
         )
     else:
         media = f'<div class="card-ph">{placeholder}</div>'
+    ori_class = ORIENTATION_CARD_CLASS.get(project.get("orientation", "landscape"), "")
     return (
         f'<a class="card rv" href="{href}">\n'
-        f'  <div class="card-media">{media}'
+        f'  <div class="card-media{ori_class}">{media}'
         f'<span class="{modus["css"]}">{esc(modus[lang])}</span></div>\n'
         f'  <div class="card-txt"><span class="svc-no">{esc(text["kategorie"])}</span>'
         f'<h3>{esc(text["titel"])}</h3>'

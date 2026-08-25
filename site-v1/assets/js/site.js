@@ -104,52 +104,6 @@
     }
   }
 
-  /* ---- Arbeiten: Projekt-Lightbox ----
-     Karte klicken → <dialog> öffnet mit Glow in der Projektfarbe (real/ki/hy),
-     Video wird erst jetzt geladen (kein Preload aller Karten). Eigenes Video
-     einsetzen: einfach data-video/-poster auf der Karte setzen, sonst nichts
-     ändern. */
-  var lightbox = $('#lightbox');
-  if (lightbox && 'showModal' in lightbox) {
-    var lbVideo = $('.lightbox-video', lightbox);
-    var lbSource = lbVideo ? $('source', lbVideo) : null;
-    var lbTitle = $('.lightbox-title', lightbox);
-    var lbMeta = $('.lightbox-meta', lightbox);
-    var lbClose = $('.lightbox-close', lightbox);
-    var lbBadge = $('.lightbox-badge', lightbox);
-    var openFrom = function (card) {
-      /* Kennzeichnung von der Karte übernehmen — so bleibt sie in beiden
-         Sprachen identisch und kann nicht auseinanderlaufen. */
-      if (lbBadge) {
-        var src = card.querySelector('.badge-real, .badge-ki, .badge-hy');
-        lbBadge.className = 'lightbox-badge ' + (src ? src.className : '');
-        lbBadge.textContent = src ? src.textContent : '';
-        lbBadge.hidden = !src;
-      }
-      if (lbTitle) lbTitle.textContent = card.dataset.title || '';
-      if (lbMeta) lbMeta.textContent = card.dataset.meta || '';
-      var hasVideo = !!(card.dataset.video);
-      var lbPh = $('.lightbox-ph', lightbox);
-      if (lbVideo) lbVideo.hidden = !hasVideo;
-      if (lbPh) lbPh.hidden = hasVideo;
-      if (hasVideo && lbVideo && lbSource) {
-        lbVideo.poster = card.dataset.poster || '';
-        lbSource.src = card.dataset.video;
-        lbVideo.load();
-      }
-      lightbox.showModal();
-      if (hasVideo && lbVideo && !reduce) lbVideo.play().catch(function () {});
-    };
-    $$('[data-lightbox]').forEach(function (card) {
-      card.addEventListener('click', function () { openFrom(card); });
-    });
-    if (lbClose) lbClose.addEventListener('click', function () { lightbox.close(); });
-    lightbox.addEventListener('click', function (e) { if (e.target === lightbox) lightbox.close(); });
-    lightbox.addEventListener('close', function () {
-      if (lbVideo) { lbVideo.pause(); if (lbSource) lbSource.src = ''; lbVideo.load(); }
-    });
-  }
-
   /* ---- REAL ⇄ KI Vergleichsregler ---- */
   $$('.compare').forEach(function (box) {
     var top = $('.compare-top', box), handle = $('.compare-handle', box), range = $('.compare-range', box);
