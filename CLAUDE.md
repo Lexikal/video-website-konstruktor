@@ -97,6 +97,11 @@ und die bei jeder Weiterentwicklung erhalten bleiben müssen:
   `compliance/Model-Release.md`. Größtes rechtliches Risiko im Fashion/Beauty-Bereich.
 - Musiklizenzen für jedes Showreel-Video, GEMA prüfen.
 - Keine unbelegten Werbeaussagen, kein "Nr. 1", keine Erfolgsgarantien (UWG).
+- **Portfolio-Kennzeichnung (Personal Project vs. Client Work vs. Marken Dritter):**
+  verbindliches Schema in `compliance/PORTFOLIO-SPEZIFIKATION.md` (vom Nutzer
+  am 2026-08-27 übergeben). Direkt anwenden, nicht bei jedem Einzelfall neu
+  diskutieren — nur echte Grenzfälle markieren (siehe Prioritätsregel Punkt 8
+  dort).
 
 Vollständiger Stand: `compliance/COMPLIANCE.md` (Blocker-Liste, Lizenzregister in
 `compliance/LIZENZEN.md`).

@@ -38,6 +38,13 @@ MODUS = {
 # ist, muss übersetzt werden — sonst steht Deutsch auf der englischen Seite.
 KUNDE_OFFEN = {"de": "Auf Anfrage", "en": "On request"}
 
+# Art des Projekts (compliance/PORTFOLIO-SPEZIFIKATION.md): englische Begriffe
+# sind bewusst sprachneutral (Personal Project, Client Work, Spec Project,
+# Selected Works, Personal Film Study) und werden unverändert in DE wie EN
+# angezeigt. "typ" fehlt im Datensatz -> Default ist "Personal Project", weil
+# ohne explizit gesetzten Kunden nichts anderes behauptet werden darf.
+TYP_DEFAULT = "Personal Project"
+
 # Seitenverhaeltnis-Klasse fuer den Media-Container. "landscape" ist die
 # bisherige Groesse (16:9 auf der Projektseite, 4:5 in der Karte) und braucht
 # deshalb keine eigene Klasse.
@@ -109,6 +116,7 @@ def build_page(project, nxt, lang, template):
         "KUNDE": project.get("kunde") or KUNDE_OFFEN[lang],
         "ROLLE": text.get("rolle", ""),
         "MODUS_LABEL": modus[lang],
+        "TYP": project.get("typ") or TYP_DEFAULT,
         "AUFGABE": text["aufgabe"],
         "ANSATZ": text["ansatz"],
         "ERGEBNIS": text["ergebnis"],
@@ -146,10 +154,12 @@ def card(project, lang, prefix=""):
     else:
         media = f'<div class="card-ph">{placeholder}</div>'
     ori_class = ORIENTATION_CARD_CLASS.get(project.get("orientation", "landscape"), "")
+    typ = esc(project.get("typ") or TYP_DEFAULT)
     return (
         f'<a class="card rv" href="{href}">\n'
         f'  <div class="card-media{ori_class}">{media}'
-        f'<span class="{modus["css"]}">{esc(modus[lang])}</span></div>\n'
+        f'<span class="{modus["css"]}">{esc(modus[lang])}</span>'
+        f'<span class="badge-type">{typ}</span></div>\n'
         f'  <div class="card-txt"><span class="svc-no">{esc(text["kategorie"])}</span>'
         f'<h3>{esc(text["titel"])}</h3>'
         f'<p>{esc(text["ergebnis"])}</p></div></a>'
