@@ -166,6 +166,30 @@ def card(project, lang, prefix=""):
     )
 
 
+def card_placeholder(project, lang):
+    """Leere Kategorie-Kachel für die Arbeiten/Work-Galerie.
+
+    Kein <a>, keine eigene Seite, kein Sitemap-Eintrag — nur sichtbar als
+    'hier fehlt noch Material'-Slot (projekte.json: showcase:true), damit
+    der Nutzer beim Sichten der Galerie sieht, welche Kategorie noch offen
+    ist, ohne dass eine leere Seite indexiert wird.
+    """
+    text = project[lang]
+    typ = esc(project.get("typ") or TYP_DEFAULT)
+    kategorie = esc(text["kategorie"])
+    wait = "In Vorbereitung" if lang == "de" else "Coming soon"
+    hint = ("Material folgt — hier ist noch nichts veröffentlicht." if lang == "de"
+            else "Footage coming — nothing published here yet.")
+    ori_class = ORIENTATION_CARD_CLASS.get(project.get("orientation", "landscape"), "")
+    return (
+        f'<div class="card card--empty rv">\n'
+        f'  <div class="card-media{ori_class}"><div class="card-ph">{wait}</div>'
+        f'<span class="badge-type">{typ}</span></div>\n'
+        f'  <div class="card-txt"><span class="svc-no">{kategorie}</span>'
+        f'<h3>{kategorie}</h3><p>{hint}</p></div></div>'
+    )
+
+
 def sitemap_entries(published, domain):
     """Sitemap-Einträge für alle veröffentlichten Projekte, beide Sprachen."""
     out = []
@@ -238,8 +262,16 @@ def main():
             (folder / f'{project["slug"]}.html').write_text(page, encoding="utf-8")
             written += 1
 
+    # Galerie auf Arbeiten/Work: veröffentlichte Projekte verlinkt, dazu leere
+    # Kategorien mit showcase:true als nicht-klickbare Platzhalter-Kachel —
+    # damit die Übersicht der ganzen Taxonomie sichtbar ist, ohne leere Seiten
+    # zu erzeugen oder zu indexieren.
+    gallery = [p for p in data["projekte"] if not p.get("draft") or p.get("showcase")]
     for lang, page in (("de", SITE / "arbeiten.html"), ("en", SITE / "en" / "work.html")):
-        block = "\n".join(card(p, lang) for p in published)
+        block = "\n".join(
+            card(p, lang) if not p.get("draft") else card_placeholder(p, lang)
+            for p in gallery
+        )
         replace_between_markers(page, block)
 
     # Startseite zeigt nur die hervorgehobenen Projekte — kuratiert, nicht alles.

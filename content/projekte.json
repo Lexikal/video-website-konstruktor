@@ -13,6 +13,11 @@
     "Personen erkennbar im Bild? Erst nach unterschriebenem Model Release veröffentlichen",
     "(Vorlage: compliance/Model-Release.md).",
     "",
+    "showcase: true  = zeigt eine leere (draft:true) Kategorie trotzdem als",
+    "       nicht-klickbare 'In Vorbereitung'-Kachel in der Arbeiten/Work-Galerie —",
+    "       keine eigene Seite, kein Sitemap-Eintrag, nur sichtbar als Slot.",
+    "       Fehlt showcase, bleibt die Kategorie komplett unsichtbar (marke-imagefilm,",
+    "       event-doku: Leistungspakete, keine Spec-Taxonomie, absichtlich ohne showcase).",
     "typ  = Personal Project | Spec Project | Client Work | Personal Film Study | Selected Works.",
     "       Englische Begriffe absichtlich, siehe compliance/PORTFOLIO-SPEZIFIKATION.md.",
     "       Fehlt das Feld, zeigt die Karte automatisch 'Personal Project' (Default in",
@@ -165,6 +170,7 @@
     {
       "slug": "portrait",
       "draft": true,
+      "showcase": true,
       "featured": false,
       "jahr": "",
       "mode": "real",
@@ -194,6 +200,7 @@
     {
       "slug": "interview",
       "draft": true,
+      "showcase": true,
       "featured": false,
       "jahr": "",
       "mode": "real",
@@ -223,6 +230,7 @@
     {
       "slug": "automotive-cinematography",
       "draft": true,
+      "showcase": true,
       "featured": false,
       "jahr": "",
       "mode": "real",
@@ -252,6 +260,7 @@
     {
       "slug": "music-visuals",
       "draft": true,
+      "showcase": true,
       "featured": false,
       "jahr": "",
       "mode": "real",
@@ -281,6 +290,7 @@
     {
       "slug": "cinematic-anamorphic",
       "draft": true,
+      "showcase": true,
       "featured": false,
       "jahr": "",
       "mode": "real",
@@ -310,6 +320,7 @@
     {
       "slug": "motion-vfx",
       "draft": true,
+      "showcase": true,
       "featured": false,
       "jahr": "",
       "mode": "real",

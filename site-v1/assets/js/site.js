@@ -171,6 +171,59 @@
     });
   }
 
+  /* ---- Filmstreifen: langsamer Auto-Scroll ----
+     Nur auf .strip[data-auto-scroll]. Karten werden einmal geklont (rein
+     dekorativ, aus Tab-Reihenfolge und Screenreadern entfernt) für eine
+     nahtlose Schleife. Pausiert bei Hover, Touch, Tastatur-Fokus und
+     während der Nutzer selbst scrollt; steht komplett still bei
+     reduced-motion — dann bleibt nur normales Wisch-/Scroll-Verhalten. */
+  $$('.strip[data-auto-scroll]').forEach(function (strip) {
+    if (reduce) return;
+    var cards = $$('.card', strip);
+    if (cards.length < 2) return;
+
+    var clones = cards.map(function (c) {
+      var clone = c.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      $$('a,button,input,[tabindex]', clone).forEach(function (el) { el.tabIndex = -1; });
+      if (clone.tagName === 'A') clone.removeAttribute('href');
+      strip.appendChild(clone);
+      return clone;
+    });
+    var loopWidth = clones[0].offsetLeft - cards[0].offsetLeft;
+    if (!(loopWidth > 0)) return;
+
+    var speed = 0.6; // px/Frame — bewusst langsam, kein Karussell-Rennen
+    var paused = false, resumeTimer = null;
+    // scrollLeft wird vom Browser auf ganze Pixel gerundet — ein Schritt
+    // unter 1px würde beim Zurücklesen sofort wieder verschluckt. Deshalb
+    // eigene Fließkomma-Position mitführen und nur zum Setzen benutzen.
+    var pos = strip.scrollLeft;
+    strip.classList.add('is-auto');
+
+    var resumeSoon = function () {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(function () { paused = false; }, 1800);
+    };
+    strip.addEventListener('pointerenter', function () { paused = true; });
+    strip.addEventListener('pointerleave', resumeSoon);
+    strip.addEventListener('focusin', function () { paused = true; });
+    strip.addEventListener('focusout', resumeSoon);
+    strip.addEventListener('touchstart', function () { paused = true; }, { passive: true });
+    strip.addEventListener('touchend', resumeSoon, { passive: true });
+    strip.addEventListener('wheel', function () { paused = true; resumeSoon(); }, { passive: true });
+
+    var step = function () {
+      if (!paused) {
+        pos += speed;
+        if (pos >= loopWidth) pos -= loopWidth;
+        strip.scrollLeft = pos;
+      }
+      window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  });
+
   /* ---- Jahr im Footer ---- */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();

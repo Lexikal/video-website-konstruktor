@@ -383,6 +383,20 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .card-txt h3{ font-family:var(--display); font-weight:800; text-transform:uppercase; font-size:1.25rem; letter-spacing:-.02em; margin:var(--s-2) 0; }
 .card-txt p{ margin:0; font-size:.88rem; color:var(--muted); }
 
+/* Leere Kategorie-Kachel (projekte.json: showcase:true, draft:true) — bewusst
+   nicht klickbar (kein <a>), gestrichelt statt Kante, kein Hover-Lift, damit
+   sie nicht als Link missverstanden wird. Zeigt nur: hier fehlt Material. */
+.card--empty{ cursor:default; border-style:dashed; border-color:var(--line-2); }
+.card--empty:hover{ transform:none; box-shadow:none; border-color:var(--line-2); }
+.card--empty:hover .card-media img{ transform:none; }
+.card--empty .card-ph{ background:none; color:var(--muted); }
+
+/* Filmstreifen: langsamer Auto-Scroll (JS setzt/entfernt is-auto). Snap muss
+   dabei aus sein, sonst kämpft er gegen die programmatische scrollLeft-
+   Änderung jeden Frame. Manuelles Scrollen/Hover pausiert den Auto-Scroll
+   und schaltet Snap wieder an (site.js). */
+.strip.is-auto{ scroll-snap-type:none; }
+
 /* ---------- Projektseite ----------
    Rhythmus statt gleichmäßigem Raster: großes Bild → Text → Luft → Bilderpaar.
    Die Stills-Reihe wechselt bewusst die Größe, damit die Seite wie ein
