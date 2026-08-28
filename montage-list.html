@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Монтажный лист</title>
+<style>
+:root{
+  --ink:      #0B0B0D;
+  --ink-2:    #131317;
+  --ink-3:    #1B1B20;
+  --paper:    #EDEAE4;
+  --muted:    #918C85;
+  --real:     #FF9E4D;
+  --line:     rgba(237,234,228,.14);
+  --line-2:   rgba(237,234,228,.28);
+  --display: "Helvetica Neue", Helvetica, Inter, "Segoe UI", Arial, sans-serif;
+  --mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0; background:var(--ink); color:var(--paper);
+  font-family:var(--display); font-size:1rem; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  padding:clamp(20px,5vw,64px) clamp(16px,4vw,48px) clamp(60px,8vw,100px);
+}
+::selection{ background:var(--real); color:var(--ink); }
+a{ color:inherit; }
+.wrap{ max-width:920px; margin:0 auto; }
+
+.head{ margin-bottom:clamp(32px,6vw,56px); }
+.kicker{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--muted); margin:0 0 14px;
+}
+h1{
+  font-family:var(--display); font-weight:800; letter-spacing:-.02em;
+  font-size:clamp(1.9rem,5vw,3.1rem); line-height:1.05; margin:0 0 16px;
+  text-wrap:balance;
+}
+.lede{ max-width:62ch; color:var(--muted); font-size:1.02rem; margin:0; }
+
+.progress{
+  display:flex; align-items:center; gap:14px; margin-top:28px;
+  font-family:var(--mono); font-size:.78rem; letter-spacing:.04em; color:var(--muted);
+}
+.progress-bar{
+  flex:1 1 auto; height:3px; background:var(--line); position:relative; max-width:280px;
+}
+.progress-bar span{
+  position:absolute; inset:0 auto 0 0; background:var(--real); width:var(--pct,0%);
+}
+.progress b{ color:var(--paper); font-weight:600; font-variant-numeric:tabular-nums; }
+
+.reel{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px;
+  border:1px solid var(--line-2); background:var(--ink-2);
+  padding:20px clamp(18px,3vw,28px); margin-bottom:clamp(28px,5vw,44px);
+}
+.reel-txt .kicker{ margin-bottom:8px; }
+.reel-txt h2{ font-family:var(--display); font-weight:800; font-size:1.15rem; margin:0 0 6px; letter-spacing:-.01em; }
+.reel-txt p{ margin:0; color:var(--muted); font-size:.9rem; max-width:52ch; }
+.reel-note{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); border:1px dashed var(--line-2); padding:8px 12px; white-space:nowrap;
+}
+
+.list{ border-top:1px solid var(--line); }
+.row{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:start; gap:20px;
+  padding:22px 0; border-bottom:1px solid var(--line);
+}
+.row:hover{ background:linear-gradient(90deg, rgba(237,234,228,.025), transparent); }
+.status{
+  width:11px; height:11px; border-radius:50%; margin-top:6px; flex:0 0 auto;
+  border:1.5px solid var(--line-2);
+}
+.status--done{ background:var(--real); border-color:var(--real); }
+.status--empty{ background:transparent; }
+.row-main h3{
+  font-family:var(--display); font-weight:800; text-transform:uppercase;
+  font-size:1.05rem; letter-spacing:-.01em; margin:0 0 6px;
+}
+.row-main .typ{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--line-2); padding:3px 7px; display:inline-block;
+  margin-bottom:10px;
+}
+.row-main p{ margin:0; color:var(--muted); font-size:.9rem; max-width:56ch; }
+.row-main p b{ color:var(--paper); font-weight:600; }
+.row-meta{
+  font-family:var(--mono); font-size:.72rem; color:var(--muted); text-align:right;
+  display:flex; flex-direction:column; align-items:flex-end; gap:6px; padding-top:2px;
+}
+.row-meta .state{ letter-spacing:.08em; text-transform:uppercase; }
+.state--done{ color:var(--real); }
+.row-meta .slug{ color:var(--paper); }
+
+.foot{
+  margin-top:clamp(40px,7vw,64px); padding-top:24px; border-top:1px solid var(--line);
+  font-size:.85rem; color:var(--muted); max-width:62ch;
+}
+.foot code{
+  font-family:var(--mono); font-size:.82em; background:var(--ink-2); padding:2px 6px;
+  border:1px solid var(--line);
+}
+
+@media (max-width:640px){
+  .row{ grid-template-columns:auto 1fr; }
+  .row-meta{ grid-column:1 / -1; flex-direction:row; justify-content:space-between; align-items:center; margin-top:4px; padding-left:31px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="head">
+    <p class="kicker">content/projekte.json — Übersicht</p>
+    <h1>Монтажный лист портфолио.</h1>
+    <p class="lede">Все категории из PORTFOLIO-SPEZIFIKATION.md на одном листе. Заполнено — уже стоит на сайте. Пусто — ждёт материала, живёт как <code style="font-family:var(--mono)">draft:true</code> в JSON, на сайте невидимо, пока не готово.</p>
+    <div class="progress">
+      <span><b>3</b> / 8 слотов заполнено</span>
+      <div class="progress-bar" style="--pct:37.5%"><span></span></div>
+    </div>
+  </div>
+
+  <div class="reel">
+    <div class="reel-txt">
+      <p class="kicker">Не слот</p>
+      <h2>Showreel</h2>
+      <p>45–90 сек, лучшие куски из всех категорий сразу. Живёт на главной / Leistungen, а не как отдельная карточка в Arbeiten. Собирается последним — когда ниже будет из чего выбирать.</p>
+    </div>
+    <span class="reel-note">Своё лицензированное треков — GEMA проверить</span>
+  </div>
+
+  <div class="list">
+
+    <div class="row">
+      <span class="status status--done"></span>
+      <div class="row-main">
+        <h3>Product</h3>
+        <span class="typ">Personal Project</span>
+        <p>Парфюм, косметика, крема, флаконы, напитки, шампанское. <b>Макро, свет, продуктовая съёмка.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state state--done">Заполнено</span>
+        <span class="slug">produkt-anzeigenvarianten</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--done"></span>
+      <div class="row-main">
+        <h3>Fashion</h3>
+        <span class="typ">Personal Project</span>
+        <p>Models, editorial, lifestyle, свободные съёмки. <b>Кампания, лукбук, движение.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state state--done">Заполнено</span>
+        <span class="slug">fashion-kampagne-studio</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--done"></span>
+      <div class="row-main">
+        <h3>Beauty</h3>
+        <span class="typ">Personal Project</span>
+        <p>Конкурсы красоты, backstage, крупные планы. <b>Два камеры, макрообъектив.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state state--done">Заполнено</span>
+        <span class="slug">beauty-wettbewerb</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--empty"></span>
+      <div class="row-main">
+        <h3>Automotive</h3>
+        <span class="typ">Personal Project</span>
+        <p>Ferrari, детали кузова, интерьер, driving shots. <b>Не «Client: Ferrari», если заказа не было.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state">Ждёт материал</span>
+        <span class="slug">automotive-cinematography</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--empty"></span>
+      <div class="row-main">
+        <h3>People · Portrait</h3>
+        <span class="typ">Personal Project</span>
+        <p>Портреты, артисты, свободные съёмки людей. <b>Только с согласием — светофор в PORTFOLIO-SPEZIFIKATION.md, §4.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state">Ждёт материал</span>
+        <span class="slug">portrait</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--empty"></span>
+      <div class="row-main">
+        <h3>Music · Artists</h3>
+        <span class="typ">Personal Project</span>
+        <p>Музыканты, перформанс, music visuals. <b>Своя музыка или лицензия — иначе не публиковать.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state">Ждёт материал</span>
+        <span class="slug">music-visuals</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--empty"></span>
+      <div class="row-main">
+        <h3>Cinematic · Anamorphic</h3>
+        <span class="typ">Personal Film Study</span>
+        <p>Анаморфотная оптика, cinematic light, постановочные сцены. <b>Показывает, что тянешь и постановочное кино.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state">Ждёт материал</span>
+        <span class="slug">cinematic-anamorphic</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--empty"></span>
+      <div class="row-main">
+        <h3>Interviews</h3>
+        <span class="typ">Personal Project</span>
+        <p>Talking heads, документальные интервью, multi-camera. <b>Свет и постановка интервью.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state">Ждёт материал</span>
+        <span class="slug">interview</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="status status--empty"></span>
+      <div class="row-main">
+        <h3>Motion · VFX</h3>
+        <span class="typ">Selected Works</span>
+        <p>Motion graphics, компоузинг, титры, 3D. <b>Только свои или лицензированные элементы.</b></p>
+      </div>
+      <div class="row-meta">
+        <span class="state">Ждёт материал</span>
+        <span class="slug">motion-vfx</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="foot">
+    Заполнить категорию: открыть <code>content/projekte.json</code>, найти слот по слагу справа,
+    вписать <code>video</code> / <code>poster</code> / <code>kunde</code> и тексты, поставить
+    <code>draft:false</code> — и написать мне «собери сайт», я запущу
+    <code>tools/build-projects.py</code> и обновлю карточки. Пока <code>draft:true</code> — слот
+    нигде публично не виден, специально, чтобы не индексировались пустые страницы.
+  </p>
+
+</div>
+
+</body>
+</html>
