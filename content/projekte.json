@@ -322,32 +322,32 @@
     },
     {
       "slug": "motion-vfx",
-      "draft": true,
+      "draft": false,
       "showcase": true,
       "featured": false,
       "jahr": "",
-      "mode": "real",
-      "typ": "Selected Works",
+      "mode": "cgi",
+      "typ": "Personal Project",
       "orientation": "landscape",
       "kunde": "",
-      "video": "",
-      "poster": "",
+      "video": "assets/video/motion-vfx.mp4",
+      "poster": "assets/img/motion-vfx.jpg",
       "stills": [],
       "de": {
-        "titel": "",
+        "titel": "Ring — Studie",
         "kategorie": "Motion Design · VFX",
         "rolle": "",
-        "aufgabe": "",
-        "ansatz": "",
-        "ergebnis": ""
+        "aufgabe": "Freie 3D-Studie zum Üben von Materialien, Licht und Kamerabewegung an einem Schmuckstück.",
+        "ansatz": "Vollständig als 3D-/Motion-Design-Arbeit entstanden — kein gefilmtes Material, keine generative KI.",
+        "ergebnis": "Kurze Produktdreh-Animation eines Rings."
       },
       "en": {
-        "titel": "",
+        "titel": "Ring — Study",
         "kategorie": "Motion design · VFX",
         "rolle": "",
-        "aufgabe": "",
-        "ansatz": "",
-        "ergebnis": ""
+        "aufgabe": "Free 3D study for practising materials, lighting and camera movement on a piece of jewellery.",
+        "ansatz": "Made entirely as 3D/motion design work — no filmed footage, no generative AI.",
+        "ergebnis": "A short product-turntable animation of a ring."
       }
     },
     {

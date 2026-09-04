@@ -28,10 +28,16 @@ DATA = ROOT / "content" / "projekte.json"
 TPL = ROOT / "tools" / "templates"
 
 # Produktionsweise → sichtbare Kennzeichnung (Art. 50 KI-VO) je Sprache.
+# "cgi" ist bewusst ein vierter, neutraler Fall: klassische 3D-/Motion-Graphics
+# aus Software (Blender, Cinema 4D, After Effects...) sind weder gefilmt noch
+# generativ-KI — Art. 50 KI-VO greift hier nicht, "Real gedreht" wäre aber
+# trotzdem falsch, weil nichts fotografiert wurde. Nur echte generative KI
+# (Midjourney/Runway/Sora & Co.) bekommt "ki"/"hy".
 MODUS = {
-    "real": {"css": "badge-real", "de": "Real gedreht", "en": "Shot for real"},
-    "ki":   {"css": "badge-ki",   "de": "KI-generiert", "en": "AI-generated"},
-    "hy":   {"css": "badge-hy",   "de": "Hybrid",       "en": "Hybrid"},
+    "real": {"css": "badge-real", "de": "Real gedreht",      "en": "Shot for real"},
+    "ki":   {"css": "badge-ki",   "de": "KI-generiert",      "en": "AI-generated"},
+    "hy":   {"css": "badge-hy",   "de": "Hybrid",            "en": "Hybrid"},
+    "cgi":  {"css": "badge-cgi",  "de": "3D / Motion Design", "en": "3D / motion design"},
 }
 
 # Kundenname ist sprachneutral; nur die Platzhalter, wenn kein Name freigegeben
