@@ -34,9 +34,16 @@ MODUS = {
     "hy":   {"css": "badge-hy",   "de": "Hybrid",       "en": "Hybrid"},
 }
 
-# Kundenname ist sprachneutral; nur der Platzhalter, wenn kein Name freigegeben
-# ist, muss übersetzt werden — sonst steht Deutsch auf der englischen Seite.
+# Kundenname ist sprachneutral; nur die Platzhalter, wenn kein Name freigegeben
+# ist, müssen übersetzt werden — sonst steht Deutsch auf der englischen Seite.
+# "Auf Anfrage" behauptet eine bestehende Geschäftsbeziehung (Name nur verschwiegen)
+# — das darf nur bei typ:"Client Work" stehen. Bei Personal Project/Spec Project/
+# Personal Film Study/Selected Works ohne Kunde muss stattdessen ehrlich "kein
+# Auftraggeber" stehen, sonst suggeriert das Feld selbst einen Auftrag, den es
+# nie gab (PORTFOLIO-SPEZIFIKATION.md §2/§21).
 KUNDE_OFFEN = {"de": "Auf Anfrage", "en": "On request"}
+KUNDE_KEIN = {"de": "— (persönliches Projekt)", "en": "— (personal project)"}
+NON_CLIENT_TYPES = {"Personal Project", "Spec Project", "Personal Film Study", "Selected Works"}
 
 # Art des Projekts (compliance/PORTFOLIO-SPEZIFIKATION.md): englische Begriffe
 # sind bewusst sprachneutral (Personal Project, Client Work, Spec Project,
@@ -108,15 +115,23 @@ def build_page(project, nxt, lang, template):
     if len(desc) > 155:
         desc = desc[:152].rsplit(" ", 1)[0] + "…"
 
+    typ_value = project.get("typ") or TYP_DEFAULT
+    if project.get("kunde"):
+        kunde_display = project["kunde"]
+    elif typ_value in NON_CLIENT_TYPES:
+        kunde_display = KUNDE_KEIN[lang]
+    else:
+        kunde_display = KUNDE_OFFEN[lang]
+
     values = {
         "SLUG": project["slug"],
         "TITEL": text["titel"],
         "KATEGORIE": text["kategorie"],
         "JAHR": project.get("jahr", ""),
-        "KUNDE": project.get("kunde") or KUNDE_OFFEN[lang],
+        "KUNDE": kunde_display,
         "ROLLE": text.get("rolle", ""),
         "MODUS_LABEL": modus[lang],
-        "TYP": project.get("typ") or TYP_DEFAULT,
+        "TYP": typ_value,
         "AUFGABE": text["aufgabe"],
         "ANSATZ": text["ansatz"],
         "ERGEBNIS": text["ergebnis"],

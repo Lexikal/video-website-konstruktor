@@ -56,29 +56,29 @@
       "slug": "fashion-kampagne-studio",
       "draft": false,
       "featured": true,
-      "jahr": "2026",
-      "mode": "hy",
+      "jahr": "",
+      "mode": "real",
       "typ": "Personal Project",
       "orientation": "landscape",
       "kunde": "",
-      "video": "",
-      "poster": "",
+      "video": "assets/video/fashion-kampagne-studio.mp4",
+      "poster": "assets/img/fashion-kampagne-studio.jpg",
       "stills": [],
       "de": {
-        "titel": "Projektname 01",
-        "kategorie": "Fashion · Kampagne",
-        "rolle": "Konzept, Kamera, Schnitt, Farbe",
-        "aufgabe": "Kampagnenmaterial für eine Kollektion — bei begrenztem Budget und ohne Reisebudget für eine Auslandslocation.",
-        "ansatz": "Ein Drehtag im Studio mit echtem Model und echten Kleidungsstücken. Die Umgebung wurde anschließend generativ ergänzt und farblich an das Studiolicht angeglichen.",
-        "ergebnis": "Hauptfilm, sechs vertikale Fassungen und ein Stills-Set für Lookbook und Social Media."
+        "titel": "Fashion Editorial — Poolside",
+        "kategorie": "Fashion",
+        "rolle": "",
+        "aufgabe": "Freies Fashion-Editorial im Freien, ohne Auftrag entstanden.",
+        "ansatz": "Ein Model, ein ausdrucksstarkes gemustertes Kleid, eine weitläufige Poolanlage mit heller Bogenarchitektur als Kulisse — vollständig real gedreht, keine generative Nachbearbeitung der Umgebung.",
+        "ergebnis": "Kurzes Editorial-Reel, das die Bewegung des Stoffs und die Location zeigt."
       },
       "en": {
-        "titel": "Project 01",
-        "kategorie": "Fashion · campaign",
-        "rolle": "Concept, camera, edit, colour",
-        "aufgabe": "Campaign material for a collection — on a limited budget and without the travel budget for an overseas location.",
-        "ansatz": "One studio shooting day with a real model and real garments. The surroundings were then extended generatively and matched to the studio light.",
-        "ergebnis": "Main film, six vertical versions and a stills set for lookbook and social media."
+        "titel": "Fashion Editorial — Poolside",
+        "kategorie": "Fashion",
+        "rolle": "",
+        "aufgabe": "Free fashion editorial shot outdoors, with no client brief behind it.",
+        "ansatz": "One model, one expressive patterned dress, a wide pool deck with bright arched architecture as the backdrop — shot entirely for real, no generative work on the surroundings.",
+        "ergebnis": "A short editorial reel built around the movement of the fabric and the location."
       }
     },
     {
