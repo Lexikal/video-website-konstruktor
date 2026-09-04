@@ -63,7 +63,10 @@
       "kunde": "",
       "video": "assets/video/fashion-kampagne-studio.mp4",
       "poster": "assets/img/fashion-kampagne-studio.jpg",
-      "stills": [],
+      "stills": [
+        "assets/img/fashion-kampagne-studio-still-1.jpg",
+        "assets/img/fashion-kampagne-studio-still-2.jpg"
+      ],
       "de": {
         "titel": "Fashion Editorial — Poolside",
         "kategorie": "Fashion",
