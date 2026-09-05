@@ -184,6 +184,20 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://lexikal.github.io/video-website-konstruktor/projekte/music-visuals.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/music-visuals.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/music-visuals.html"/>
+    <lastmod>2026-09-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lexikal.github.io/video-website-konstruktor/en/projects/music-visuals.html</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/music-visuals.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/music-visuals.html"/>
+    <lastmod>2026-09-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://lexikal.github.io/video-website-konstruktor/projekte/motion-vfx.html</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://lexikal.github.io/video-website-konstruktor/projekte/motion-vfx.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://lexikal.github.io/video-website-konstruktor/en/projects/motion-vfx.html"/>

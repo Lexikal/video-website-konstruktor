@@ -262,7 +262,7 @@
     },
     {
       "slug": "music-visuals",
-      "draft": true,
+      "draft": false,
       "showcase": true,
       "featured": false,
       "jahr": "",
@@ -270,24 +270,24 @@
       "typ": "Personal Project",
       "orientation": "landscape",
       "kunde": "",
-      "video": "",
-      "poster": "",
+      "video": "assets/video/music-visuals.mp4",
+      "poster": "assets/img/music-visuals.jpg",
       "stills": [],
       "de": {
-        "titel": "",
+        "titel": "Music Visuals — Nahaufnahme",
         "kategorie": "Music · Artists",
         "rolle": "",
-        "aufgabe": "",
-        "ansatz": "",
-        "ergebnis": ""
+        "aufgabe": "Freies Musikvisual mit einem Musiker, entstanden ohne Auftrag als kreative Zusammenarbeit.",
+        "ansatz": "Ein Licht, dunkler Hintergrund, Nahaufnahme auf Gesicht und Performance — reduziert, damit Stimme und Ausdruck tragen.",
+        "ergebnis": "Kurzes Visual zu einem eigenen Track des Musikers."
       },
       "en": {
-        "titel": "",
+        "titel": "Music Visuals — Close-Up",
         "kategorie": "Music · artists",
         "rolle": "",
-        "aufgabe": "",
-        "ansatz": "",
-        "ergebnis": ""
+        "aufgabe": "Free music visual with a musician, made as a creative collaboration with no client behind it.",
+        "ansatz": "One light, dark background, close-up on face and performance — kept minimal so the voice and expression carry it.",
+        "ergebnis": "A short visual for one of the musician's own tracks."
       }
     },
     {
