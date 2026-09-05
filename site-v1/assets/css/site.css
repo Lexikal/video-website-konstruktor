@@ -375,13 +375,17 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .card:hover{ box-shadow:0 0 0 1px var(--line-2), 0 18px 40px -20px rgba(0,0,0,.6); }
 
 .card-media{ position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink-3); }
-.card-media img{ width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
+.card-media img, .card-media video{ width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
+/* Vorschau-Video in der Karte: startet als Standbild (poster), spielt erst
+   bei Hover/Tastaturfokus (site.js) — bis dahin identisch zum Foto, kein
+   Datenverbrauch im Voraus (preload="none"). */
+.card-video{ pointer-events:none; }
 /* Aufnahmen im Hochformat (Hochzeit-Reel, Social-Vertikal) nicht auf 4:5
    zwingen — der Bildausschnitt geht sonst verloren. Quadratisch fürs
    Instagram-Feed-Format. Gesteuert über projekte.json: orientation. */
 .card-media--portrait{ aspect-ratio:3/4; }
 .card-media--square{ aspect-ratio:1/1; }
-.card:hover .card-media img{ transform:scale(1.04); }
+.card:hover .card-media img, .card:hover .card-media video{ transform:scale(1.04); }
 .card-ph{
   position:absolute; inset:0; display:grid; place-items:center;
   background:linear-gradient(145deg, rgba(237,234,228,.05), rgba(237,234,228,.02)), var(--ink-3);

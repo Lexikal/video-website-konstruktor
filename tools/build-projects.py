@@ -82,6 +82,14 @@ def hero_media(project, lang, depth):
     """Video wenn vorhanden, sonst Platzhalterfläche.
 
     depth ist das Pfad-Präfix zurück nach site-v1/ ('../' oder '../../').
+
+    controlsList="nodownload" blendet nur den Download-Knopf in den nativen
+    Controls aus (Chrome/Edge) — das ist eine Komfort-Bremse, kein Schutz:
+    die Datei liegt als normale statische URL im Netz, jeder kann sie per
+    Direktlink/DevTools/curl ziehen. Echter Kopierschutz bräuchte einen
+    Video-Host mit signierten/ablaufenden URLs (Vimeo Private, Cloudflare
+    Stream o.ä.) — das wäre ein externer Request und würde die aktuelle
+    "keine externen Ressourcen, kein Cookie-Banner nötig"-Lage kippen.
     """
     placeholder = "MEDIA folgt" if lang == "de" else "MEDIA coming soon"
     video = project.get("video")
@@ -91,7 +99,8 @@ def hero_media(project, lang, depth):
     poster_attr = f' poster="{depth}{esc(poster)}"' if poster else ""
     label = "Video abspielen" if lang == "de" else "Play video"
     return (
-        f'<video controls playsinline preload="none"{poster_attr} aria-label="{label}">'
+        f'<video controls controlsList="nodownload" playsinline preload="none"'
+        f'{poster_attr} aria-label="{label}">'
         f'<source src="{depth}{esc(video)}" type="video/mp4"></video>'
     )
 
@@ -164,16 +173,27 @@ def card(project, lang, prefix=""):
         f'{prefix}projekte/{project["slug"]}.html' if lang == "de"
         else f'{prefix}projects/{project["slug"]}.html'
     )
-    placeholder = "MEDIA" if not project.get("poster") else ""
-    if project.get("poster"):
-        depth = "" if lang == "de" else "../"
+    depth = "" if lang == "de" else "../"
+    video = project.get("video")
+    poster = project.get("poster")
+    if video:
+        # Vorschau spielt nur bei Hover/Tastaturfokus (site.js) — bewusst
+        # ohne Ton, ohne Controls, ohne eigenen Klick-Umweg. Ein Klick auf
+        # die Karte navigiert wie gehabt über das umschließende <a>.
+        poster_attr = f' poster="{depth}{esc(poster)}"' if poster else ""
+        media = (
+            f'<video class="card-video" muted loop playsinline preload="none"'
+            f'{poster_attr} aria-hidden="true">'
+            f'<source src="{depth}{esc(video)}" type="video/mp4"></video>'
+        )
+    elif poster:
         alt = esc(text["titel"])
         media = (
-            f'<img src="{depth}{esc(project["poster"])}" alt="{alt}" '
+            f'<img src="{depth}{esc(poster)}" alt="{alt}" '
             f'loading="lazy" decoding="async">'
         )
     else:
-        media = f'<div class="card-ph">{placeholder}</div>'
+        media = '<div class="card-ph">MEDIA</div>'
     ori_class = ORIENTATION_CARD_CLASS.get(project.get("orientation", "landscape"), "")
     typ = esc(project.get("typ") or TYP_DEFAULT)
     return (

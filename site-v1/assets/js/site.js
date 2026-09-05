@@ -224,6 +224,35 @@
     window.requestAnimationFrame(step);
   });
 
+  /* ---- Karten-Vorschau: Video spielt bei Hover/Tastaturfokus ----
+     Nur auf Geräten mit echtem Hover (Maus/Trackpad) — auf Touch würde ein
+     "kurz antippen zum Vorschauen" nur den eigentlichen Klick verzögern,
+     dort führt ein Tap direkt zur Projektseite, wo das Video sowieso spielt.
+     Steht komplett still bei reduced-motion. */
+  if (!reduce && window.matchMedia('(hover: hover)').matches) {
+    $$('.card-video').forEach(function (v) {
+      var card = v.closest('.card');
+      if (!card) return;
+      var start = function () { v.play().catch(function () {}); };
+      var stop = function () { v.pause(); v.currentTime = 0; };
+      card.addEventListener('pointerenter', start);
+      card.addEventListener('pointerleave', stop);
+      card.addEventListener('focusin', start);
+      card.addEventListener('focusout', stop);
+    });
+  }
+
+  /* ---- Kein Rechtsklick-Download auf Videos ----
+     Blendet nur "Video speichern unter…" im Kontextmenü aus — keine echte
+     Zugriffssperre. Die Datei liegt als normale statische URL im Netz;
+     wer sie wirklich ziehen will, kommt per DevTools/Direktlink trotzdem
+     dran. Echter Schutz bräuchte einen Video-Host mit signierten/
+     ablaufenden URLs, was externe Requests bedeuten würde (siehe
+     tools/build-projects.py, hero_media()). */
+  document.addEventListener('contextmenu', function (e) {
+    if (e.target.tagName === 'VIDEO') e.preventDefault();
+  });
+
   /* ---- Jahr im Footer ---- */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();
