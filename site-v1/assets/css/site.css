@@ -365,6 +365,24 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 }
 .strip::-webkit-scrollbar{ height:3px; }
 .strip::-webkit-scrollbar-thumb{ background:var(--line-2); }
+
+/* Pfeile zum manuellen Steuern des Filmstreifens (site.js) — Hover schiebt
+   in die Richtung, Klick springt eine Karte weiter. Nur auf Geräten mit
+   echter Maus/Trackpad: auf Touch übernimmt das native Wischen, ein
+   zusätzlicher Button wäre dort nur im Weg. */
+.strip-nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+  width:44px; height:44px; display:none; align-items:center; justify-content:center;
+  background:rgba(11,11,13,.72); border:1px solid var(--line-2); color:var(--paper);
+  font-size:1.3rem; line-height:1; cursor:pointer; appearance:none; padding:0;
+  transition:background .2s var(--ease), border-color .2s var(--ease), opacity .2s var(--ease);
+}
+.strip-nav:hover, .strip-nav:focus-visible{ background:var(--ink); border-color:var(--real); }
+.strip-nav--prev{ left:var(--s-2); }
+.strip-nav--next{ right:var(--s-2); }
+@media (hover:hover) and (pointer:fine){
+  .strip-nav{ display:flex; }
+}
 .card{
   flex:0 0 78%; max-width:520px; scroll-snap-align:start; text-decoration:none;
   border:1px solid var(--line); background:var(--ink-2); display:block;

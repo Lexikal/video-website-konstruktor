@@ -200,6 +200,10 @@
     // eigene Fließkomma-Position mitführen und nur zum Setzen benutzen.
     var pos = strip.scrollLeft;
     strip.classList.add('is-auto');
+    var wrap = function (p) {
+      p = p % loopWidth;
+      return p < 0 ? p + loopWidth : p;
+    };
 
     var resumeSoon = function () {
       clearTimeout(resumeTimer);
@@ -213,10 +217,38 @@
     strip.addEventListener('touchend', resumeSoon, { passive: true });
     strip.addEventListener('wheel', function () { paused = true; resumeSoon(); }, { passive: true });
 
+    // Pfeile: Hover/Fokus schiebt schneller in die Richtung (überstimmt die
+    // Pause — genau dafür sind sie da, falls jemand ein Projekt verpasst hat
+    // und nicht 1,8s auf den Auto-Scroll warten will), Klick springt eine
+    // Karte weiter/zurück. Nach dem Verlassen läuft das normale Ambiente-
+    // Tempo sofort weiter, kein Warten nötig.
+    var manualDir = 0;
+    var navSpeed = speed * 8;
+    var bindNav = function (btn, dir) {
+      if (!btn) return;
+      btn.addEventListener('pointerenter', function () { manualDir = dir; });
+      btn.addEventListener('pointerleave', function () { manualDir = 0; });
+      btn.addEventListener('focus', function () { manualDir = dir; });
+      btn.addEventListener('blur', function () { manualDir = 0; });
+      btn.addEventListener('click', function () {
+        var gap = parseFloat(getComputedStyle(strip).columnGap) || 16;
+        var step = cards[0].getBoundingClientRect().width + gap;
+        pos = wrap(pos + dir * step);
+        strip.scrollLeft = pos;
+      });
+    };
+    var viewport = strip.closest('.strip-viewport');
+    if (viewport) {
+      bindNav(viewport.querySelector('.strip-nav--prev'), -1);
+      bindNav(viewport.querySelector('.strip-nav--next'), 1);
+    }
+
     var step = function () {
-      if (!paused) {
-        pos += speed;
-        if (pos >= loopWidth) pos -= loopWidth;
+      if (manualDir !== 0) {
+        pos = wrap(pos + manualDir * navSpeed);
+        strip.scrollLeft = pos;
+      } else if (!paused) {
+        pos = wrap(pos + speed);
         strip.scrollLeft = pos;
       }
       window.requestAnimationFrame(step);
