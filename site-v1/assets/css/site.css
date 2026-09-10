@@ -127,9 +127,9 @@ h2.display{ font-size:var(--t-h2); }
   letter-spacing:-.02em; font-size:1.05rem; text-decoration:none; line-height:1;
   display:flex; align-items:center; gap:9px; margin-right:auto;
 }
-.brand i{
-  width:9px; height:9px; background:var(--real); border-radius:50%;
-  display:block; flex:none;
+.brand-mark{
+  width:22px; height:22px; display:block; flex:none;
+  filter:drop-shadow(0 0 10px rgba(255,158,77,.18));
 }
 .nav-links{ display:none; gap:var(--s-5); list-style:none; margin:0; padding:0; }
 .nav-links a{

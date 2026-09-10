@@ -4,10 +4,11 @@
 // Ausführen aus dem Projektstamm:
 //   swift tools/make-og-image.swift
 //
-// Bewusst ohne {{NAME}}/{{STADT}}: solange dort Platzhalter stehen, sähe das
-// geteilte Vorschaubild kaputt aus. Sobald der echte Name feststeht, hier
-// ergänzen und neu erzeugen. Später kann das Textbild durch ein echtes
-// Filmstill ersetzt werden — dann diese Datei entsprechend anpassen.
+// Name steht fest (Unique Films) — Emblem + Wortmarke oben rechts, aus der
+// bereits erzeugten Favicon-Kachel geladen (deren Hintergrund #0B0B0D ist
+// identisch mit dem Hintergrund hier, deshalb keine sichtbare Kante beim
+// Kompositieren). Später kann das Textbild durch ein echtes Filmstill
+// ersetzt werden — dann diese Datei entsprechend anpassen.
 
 import AppKit
 import Foundation
@@ -18,6 +19,7 @@ let paper    = NSColor(srgbRed: 0.929, green: 0.918, blue: 0.894, alpha: 1) // #
 let muted    = NSColor(srgbRed: 0.569, green: 0.549, blue: 0.522, alpha: 1) // #918C85
 let warm     = NSColor(srgbRed: 1.000, green: 0.620, blue: 0.302, alpha: 1) // #FF9E4D Tungsten
 let cool     = NSColor(srgbRed: 0.357, green: 0.659, blue: 0.851, alpha: 1) // #5BA8D9 Tageslicht
+let champagne = NSColor(srgbRed: 0.816, green: 0.737, blue: 0.573, alpha: 1) // Textfarbe der Wortmarke, angenähert
 
 guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: W, pixelsHigh: H,
                                 bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
@@ -74,6 +76,20 @@ NSAttributedString(string: "FILM   FOTOGRAFIE   REAL + GENERATIV", attributes: [
 if let grad = NSGradient(starting: warm, ending: cool) {
     grad.draw(in: NSRect(x: 840, y: 66, width: 280, height: 4), angle: 0)
 }
+
+// Emblem + Wortmarke oben rechts — dieselbe Kachel wie Favicon/Apple-Touch-Icon,
+// nur hier gezeichnet statt verlinkt, weil OG-Bilder als ein einzelnes JPEG
+// geteilt werden, kein HTML mit separaten <link>-Icons.
+if let mark = NSImage(contentsOfFile: "site-v1/assets/img/logo/apple-touch-icon.png") {
+    let side: CGFloat = 64
+    mark.draw(in: NSRect(x: W - 80 - Int(side), y: H - 64 - Int(side), width: Int(side), height: Int(side)))
+}
+let word = NSFont(name: "HelveticaNeue-Medium", size: 20) ?? NSFont.systemFont(ofSize: 20, weight: .medium)
+let wordmark = NSMutableAttributedString(string: "UNIQUE FILMS", attributes: [
+    .font: word, .foregroundColor: champagne, .kern: 3
+])
+let wmSize = wordmark.size()
+wordmark.draw(at: NSPoint(x: CGFloat(W) - 80 - wmSize.width, y: CGFloat(H) - 64 - 64 - 14))
 
 NSGraphicsContext.restoreGraphicsState()
 
