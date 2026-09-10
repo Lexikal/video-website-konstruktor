@@ -166,7 +166,17 @@ def build_page(project, nxt, lang, template):
 
 
 def card(project, lang, prefix=""):
-    """Karte für Übersicht und Startseite — verlinkt auf die eigene Projektseite."""
+    """Karte für Übersicht und Startseite — verlinkt auf die eigene Projektseite.
+
+    Die data-Attribute sind das Datenmodell für das Trailer-Fenster (site.js):
+    es liest alles von der Karte, statt die Projektdaten ein zweites Mal als
+    JSON in die Seite zu schreiben. Klappt JS nicht, bleibt die Karte ein
+    normaler Link auf die Projektseite — dort liegt derselbe Inhalt.
+
+    Kein 'rv' auf Reel-Karten: die Scroll-Reveal-Klasse animiert opacity und
+    transform per CSS-Transition, das Reel setzt beides pro Frame selbst.
+    Beides zusammen würde sichtbar schmieren.
+    """
     text = project[lang]
     modus = MODUS.get(project.get("mode", "real"), MODUS["real"])
     href = (
@@ -177,14 +187,14 @@ def card(project, lang, prefix=""):
     video = project.get("video")
     poster = project.get("poster")
     if video:
-        # Vorschau spielt nur bei Hover/Tastaturfokus (site.js) — bewusst
-        # ohne Ton, ohne Controls, ohne eigenen Klick-Umweg. Ein Klick auf
-        # die Karte navigiert wie gehabt über das umschließende <a>.
+        # Vorschau läuft stumm, sobald die Karte in der Mitte steht (site.js);
+        # ohne Ton, ohne Controls, kein Vorab-Laden.
         poster_attr = f' poster="{depth}{esc(poster)}"' if poster else ""
         media = (
             f'<video class="card-video" muted loop playsinline preload="none"'
             f'{poster_attr} aria-hidden="true">'
             f'<source src="{depth}{esc(video)}" type="video/mp4"></video>'
+            f'<span class="card-play" aria-hidden="true">&#9654;</span>'
         )
     elif poster:
         alt = esc(text["titel"])
@@ -194,16 +204,41 @@ def card(project, lang, prefix=""):
         )
     else:
         media = '<div class="card-ph">MEDIA</div>'
+
     ori_class = ORIENTATION_CARD_CLASS.get(project.get("orientation", "landscape"), "")
-    typ = esc(project.get("typ") or TYP_DEFAULT)
+    typ_value = project.get("typ") or TYP_DEFAULT
+    if project.get("kunde"):
+        kunde_display = project["kunde"]
+    elif typ_value in NON_CLIENT_TYPES:
+        kunde_display = ""      # im Trailer-Fenster lieber weglassen als "kein Auftraggeber"
+    else:
+        kunde_display = KUNDE_OFFEN[lang]
+
+    data = [
+        ("data-titel", text["titel"]),
+        ("data-kategorie", text["kategorie"]),
+        ("data-typ", typ_value),
+        ("data-jahr", project.get("jahr", "")),
+        ("data-rolle", text.get("rolle", "")),
+        ("data-kunde", kunde_display),
+        ("data-aufgabe", text.get("aufgabe", "")),
+        ("data-modus", modus[lang]),
+        ("data-modus-css", modus["css"]),
+        ("data-video", f'{depth}{video}' if video else ""),
+        ("data-poster", f'{depth}{poster}' if poster else ""),
+    ]
+    attrs = "".join(f' {k}="{esc(v)}"' for k, v in data if v)
+
     return (
-        f'<a class="card rv" href="{href}">\n'
-        f'  <div class="card-media{ori_class}">{media}'
+        f'<a class="card" href="{href}"{attrs}>\n'
+        f'  <div class="card-inner">\n'
+        f'    <div class="card-media{ori_class}">{media}'
         f'<span class="{modus["css"]}">{esc(modus[lang])}</span>'
-        f'<span class="badge-type">{typ}</span></div>\n'
-        f'  <div class="card-txt"><span class="svc-no">{esc(text["kategorie"])}</span>'
+        f'<span class="badge-type">{esc(typ_value)}</span></div>\n'
+        f'    <div class="card-txt"><span class="svc-no">{esc(text["kategorie"])}</span>'
         f'<h3>{esc(text["titel"])}</h3>'
-        f'<p>{esc(text["ergebnis"])}</p></div></a>'
+        f'<p>{esc(text["ergebnis"])}</p></div>\n'
+        f'  </div></a>'
     )
 
 
@@ -223,11 +258,13 @@ def card_placeholder(project, lang):
             else "Footage coming — nothing published here yet.")
     ori_class = ORIENTATION_CARD_CLASS.get(project.get("orientation", "landscape"), "")
     return (
-        f'<div class="card card--empty rv">\n'
-        f'  <div class="card-media{ori_class}"><div class="card-ph">{wait}</div>'
+        f'<div class="card card--empty">\n'
+        f'  <div class="card-inner">\n'
+        f'    <div class="card-media{ori_class}"><div class="card-ph">{wait}</div>'
         f'<span class="badge-type">{typ}</span></div>\n'
-        f'  <div class="card-txt"><span class="svc-no">{kategorie}</span>'
-        f'<h3>{kategorie}</h3><p>{hint}</p></div></div>'
+        f'    <div class="card-txt"><span class="svc-no">{kategorie}</span>'
+        f'<h3>{kategorie}</h3><p>{hint}</p></div>\n'
+        f'  </div></div>'
     )
 
 

@@ -356,19 +356,13 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .svc-for{ font-size:.86rem; color:var(--muted); margin-top:var(--s-4); }
 .svc-for b{ color:var(--paper); font-weight:600; }
 
-/* ---------- Arbeiten / Projekt-Reel ----------
-   Kein Musik-Player-Zitat: Bedienleiste liest sich wie ein Schnitt-Deck
-   (zurück/abspielen/weiter, Timecode-Anzeige, Kapitelpunkte), weil das
-   tatsächlich die Welt ist, aus der die Arbeit kommt. */
+/* ---------- Filmstreifen (Labor) ----------
+   Einfache Scroll-Snap-Leiste. Bleibt für Seiten ohne [data-reel]. */
 .strip-viewport{ position:relative; }
 .strip{
   display:flex; gap:var(--s-4); overflow-x:auto; scroll-snap-type:x mandatory;
   padding-block:var(--s-3) var(--s-4); scrollbar-width:thin;
   -webkit-overflow-scrolling:touch;
-  /* Genug Seitenraum, damit auch die erste/letzte Karte auf Desktop mittig
-     scrollen kann (50vw minus halbe Kartenbreite). Auf schmalen Screens
-     reicht das nicht aus — dort bleibt es beim normalen Rand-Padding, was
-     dort auch richtig ist: kein Platz für Nachbarkarten am Rand. */
   padding-inline:max(var(--pad), calc(50vw - 260px));
 }
 .strip::-webkit-scrollbar{ height:3px; }
@@ -378,14 +372,100 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
   border:1px solid var(--line); background:var(--ink-2); display:block;
   transition:border-color .3s var(--ease), box-shadow .3s var(--ease);
   appearance:none; padding:0; margin:0; font:inherit; color:inherit; text-align:left; cursor:pointer;
-  will-change:transform, opacity;
 }
 .card:hover{ border-color:var(--line-2); box-shadow:0 0 0 1px var(--line-2), 0 18px 40px -20px rgba(0,0,0,.6); }
 
-/* ---------- Reel-Deck: Schnitt-Bedienleiste unter dem Streifen ---------- */
-.reel-deck{
+/* ---------- Projekt-Reel: räumliches Karussell ----------
+   Karten stehen auf einer Bühne mit Perspektive statt in einer Scroll-Leiste:
+   die mittlere Karte ist vorn, groß und scharf, die Nachbarn treten nach
+   hinten weg. Position/Skalierung/Deckkraft setzt site.js pro Frame als
+   Inline-Transform — hier steht nur, wie eine Karte aussieht, nicht wo sie
+   steht. Alles unter [data-reel], damit die Labor-Leiste unberührt bleibt. */
+.strip-viewport.is-spatial .strip[data-reel]{
+  --reel-card-w:clamp(230px, 27vw, 360px);
+  display:block; position:relative; overflow:hidden;
+  height:var(--reel-stage-h, 520px);
+  padding:0; margin:0;
+  perspective:1500px; perspective-origin:50% 44%;
+  scroll-snap-type:none;
+  touch-action:pan-y;            /* vertikal scrollt die Seite, horizontal wir */
+  cursor:grab;
+}
+.strip-viewport.is-spatial .strip[data-reel]:active{ cursor:grabbing; }
+.strip-viewport.is-spatial .strip[data-reel]::-webkit-scrollbar{ display:none; }
+/* Atmosphäre: die Bühne dunkelt zu den Rändern ab, damit die abgeblendeten
+   Karten nicht abgeschnitten wirken, sondern in Tiefe verschwinden.
+   Bewusst neutral-kühles Grau, kein Farbakzent — Warm/Kalt sind auf dieser
+   Seite als Kennzeichnung belegt (real vs. KI) und dürfen nicht als
+   Dekoration auftauchen. */
+.strip-viewport.is-spatial .strip[data-reel]::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:60;
+  background:
+    linear-gradient(90deg, var(--ink) 0%, rgba(11,11,13,0) 16%, rgba(11,11,13,0) 84%, var(--ink) 100%),
+    radial-gradient(70% 120% at 50% 42%, rgba(237,234,228,.05), transparent 62%);
+}
+.strip-viewport.is-spatial .card{
+  position:absolute; top:50%; left:50%; z-index:1;
+  width:var(--reel-card-w); max-width:none; flex:none; margin:0;
+  border-radius:18px; overflow:hidden;
+  background:rgba(19,19,23,.78);
+  border:1px solid rgba(237,234,228,.10);
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.9);
+  transform-origin:50% 50%;
+  will-change:transform, opacity;
+  /* Kein transition auf transform/opacity: die setzt der rAF-Loop jeden
+     Frame selbst, eine CSS-Transition würde dagegen anlaufen und schmieren. */
+  transition:border-color .4s var(--ease), box-shadow .4s var(--ease);
+}
+/* Der innere Träger nimmt Hover-Skalierung und Neigung auf, damit er sich
+   nicht mit dem Karussell-Transform der äußeren Karte streitet. */
+.strip-viewport.is-spatial .card-inner{
+  display:block; transform-style:preserve-3d;
+  transform:
+    perspective(900px)
+    rotateX(calc(var(--tilt-x, 0) * 3deg))
+    rotateY(calc(var(--tilt-y, 0) * 4deg))
+    scale(var(--hover-scale, 1));
+  transition:transform .45s cubic-bezier(.16,1,.3,1);
+}
+.strip-viewport.is-spatial .card[data-active="true"]{
+  border-color:rgba(237,234,228,.22);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.95), 0 0 0 1px rgba(237,234,228,.06);
+}
+.strip-viewport.is-spatial .card:focus-visible{ outline:2px solid var(--real); outline-offset:4px; }
+/* Randlicht auf der Glaskante — nur auf der aktiven Karte, sonst wird die
+   Bühne unruhig. */
+.strip-viewport.is-spatial .card[data-active="true"] .card-media::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+  background:linear-gradient(160deg, rgba(237,234,228,.14), transparent 38%);
+}
+.strip-viewport.is-spatial .card-txt{
+  background:rgba(11,11,13,.55);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  border-top:1px solid rgba(237,234,228,.08);
+}
+/* Play-Andeutung auf der aktiven Karte mit Video: sagt, dass ein Klick den
+   Trailer öffnet, statt es raten zu lassen. */
+.card-play{ display:none; }
+.strip-viewport.is-spatial .card-play{
+  position:absolute; left:50%; top:50%; z-index:3;
+  width:56px; height:56px; margin:-28px 0 0 -28px; border-radius:50%;
+  display:grid; place-items:center; pointer-events:none;
+  background:rgba(11,11,13,.55); border:1px solid rgba(237,234,228,.35);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  color:var(--paper); font-size:.85rem; padding-left:3px;
+  opacity:0; transform:scale(.86);
+  transition:opacity .4s var(--ease), transform .4s cubic-bezier(.16,1,.3,1);
+}
+.strip-viewport.is-spatial .card[data-active="true"] .card-play{ opacity:1; transform:scale(1); }
+
+/* ---------- Reel-Deck: Schnitt-Bedienleiste unter dem Streifen ----------
+   Ohne JS steuert das Deck nichts — dann bleibt es aus, und die Leiste ist
+   eine gewöhnliche Scroll-Leiste mit funktionierenden Links. */
+.reel-deck{ display:none; }
+.strip-viewport.is-spatial .reel-deck{
   display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap;
-  padding:0 var(--pad) var(--s-2);
+  padding:var(--s-4) var(--pad) var(--s-2);
 }
 .reel-btn{
   width:40px; height:40px; border-radius:50%; flex:0 0 auto;
@@ -410,6 +490,128 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .reel-dot--empty{ border-style:dashed; cursor:default; }
 .reel-dot:disabled{ cursor:default; }
 
+/* ---------- Trailer-Fenster ----------
+   Die angeklickte Karte wächst in dieses Panel hinein (FLIP in site.js).
+   Der Hintergrund bleibt sichtbar: das Reel soll dahinter stehen bleiben,
+   statt hinter einer schwarzen Fläche zu verschwinden. */
+.reel-modal{
+  position:fixed; inset:0; z-index:200; display:grid; place-items:center;
+  padding:clamp(16px,4vw,48px);
+}
+.reel-modal[hidden]{ display:none; }
+.reel-scrim{
+  position:absolute; inset:0; border:0; padding:0; cursor:pointer;
+  background:rgba(11,11,13,.62);
+  -webkit-backdrop-filter:blur(10px) saturate(.9); backdrop-filter:blur(10px) saturate(.9);
+  opacity:0; transition:opacity .5s var(--ease);
+}
+.reel-modal[data-open="true"] .reel-scrim{ opacity:1; }
+.reel-panel{
+  position:relative; z-index:1;
+  width:min(82vw, 1240px); max-height:calc(100vh - clamp(32px,8vw,96px));
+  transform-origin:50% 50%; will-change:transform, opacity;
+}
+.reel-panel-3d{
+  display:flex; flex-direction:column; max-height:inherit;
+  border-radius:32px; overflow:hidden; position:relative;
+  background:rgba(16,16,20,.86);
+  -webkit-backdrop-filter:blur(28px) saturate(1.1); backdrop-filter:blur(28px) saturate(1.1);
+  border:1px solid rgba(237,234,228,.13);
+  box-shadow:0 60px 140px -40px rgba(0,0,0,.95), 0 0 0 1px rgba(237,234,228,.04);
+  transform:
+    perspective(1200px)
+    rotateX(calc(var(--tilt-x, 0) * 3deg))
+    rotateY(calc(var(--tilt-y, 0) * 4deg));
+  transition:transform .6s cubic-bezier(.16,1,.3,1);
+}
+/* Lichtreflex auf dem Glas, folgt dem Zeiger. Bewusst schwach: reflektiertes
+   Licht, kein Suchscheinwerfer. */
+.reel-panel-3d::before{
+  content:""; position:absolute; inset:0; z-index:4; pointer-events:none;
+  background:radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(237,234,228,.09), transparent 60%
+  );
+  opacity:0; transition:opacity .5s var(--ease);
+}
+.reel-panel-3d[data-lit="true"]::before{ opacity:1; }
+
+.reel-head{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+  padding:16px clamp(16px,2.4vw,26px); flex:0 0 auto;
+  border-bottom:1px solid rgba(237,234,228,.07);
+}
+.reel-head-tag{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--muted);
+}
+.reel-head-tag i{
+  width:7px; height:7px; border-radius:50%; background:var(--real); flex:0 0 auto;
+  box-shadow:0 0 0 4px rgba(255,158,77,.16);
+}
+.reel-close{
+  display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+  min-height:40px; padding:9px 16px 9px 14px; border-radius:999px;
+  background:rgba(237,234,228,.06); border:1px solid rgba(237,234,228,.16);
+  color:var(--paper); font-family:var(--mono); font-size:.68rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  transition:background .25s var(--ease), border-color .25s var(--ease);
+}
+.reel-close:hover, .reel-close:focus-visible{
+  background:rgba(237,234,228,.12); border-color:rgba(237,234,228,.34);
+}
+
+.reel-stage{
+  position:relative; flex:0 1 auto; min-height:0;
+  aspect-ratio:16/9; background:var(--ink-3); overflow:hidden;
+}
+.reel-stage video, .reel-stage img{ width:100%; height:100%; object-fit:cover; display:block; }
+.reel-stage-poster{
+  position:absolute; inset:0; z-index:2; border:0; padding:0;
+  width:100%; height:100%; cursor:pointer; background:none;
+}
+.reel-stage-poster::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(11,11,13,.2), rgba(11,11,13,.5));
+}
+.reel-stage-poster[hidden]{ display:none; }
+.reel-bigplay{
+  position:absolute; left:50%; top:50%; z-index:3; margin:-38px 0 0 -38px;
+  width:76px; height:76px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(11,11,13,.5); border:1px solid rgba(237,234,228,.4);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  color:var(--paper); font-size:1.15rem; padding-left:5px; pointer-events:none;
+  transition:transform .4s cubic-bezier(.16,1,.3,1), background .3s var(--ease);
+}
+.reel-stage-poster:hover .reel-bigplay,
+.reel-stage-poster:focus-visible .reel-bigplay{ transform:scale(1.08); background:rgba(11,11,13,.68); }
+
+.reel-info{
+  display:grid; gap:var(--s-4) var(--s-6); align-items:end;
+  padding:clamp(18px,2.6vw,30px) clamp(16px,2.4vw,26px);
+  overflow-y:auto; min-height:0;
+}
+.reel-info h2{
+  font-family:var(--display); font-weight:800; text-transform:uppercase;
+  font-size:clamp(1.4rem,3vw,2.3rem); letter-spacing:-.03em; margin:0;
+  text-wrap:balance;
+}
+.reel-role{ margin:10px 0 0; color:var(--muted); font-size:.95rem; }
+.reel-tagline{ margin:12px 0 0; max-width:58ch; font-size:.95rem; }
+.reel-facts{
+  display:flex; flex-wrap:wrap; gap:8px 18px; margin:0; padding:0; list-style:none;
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted);
+}
+.reel-facts b{ color:var(--paper); font-weight:600; }
+.reel-side{ display:grid; gap:var(--s-4); align-content:end; }
+@media (min-width:860px){
+  .reel-info{ grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); }
+  .reel-side{ justify-items:end; text-align:right; }
+  .reel-facts{ justify-content:flex-end; }
+}
+
 .card-media{ position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink-3); }
 .card-media img, .card-media video{ width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
 /* Vorschau-Video in der Karte: startet als Standbild (poster), spielt erst
@@ -422,6 +624,10 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .card-media--portrait{ aspect-ratio:3/4; }
 .card-media--square{ aspect-ratio:1/1; }
 .card:hover .card-media img, .card:hover .card-media video{ transform:scale(1.04); }
+/* Im Reel übernimmt .card-inner die Hover-Skalierung — beides zusammen wäre
+   doppelt und würde den Bildausschnitt zu weit anschneiden. */
+.strip-viewport.is-spatial .card:hover .card-media img,
+.strip-viewport.is-spatial .card:hover .card-media video{ transform:none; }
 .card-ph{
   position:absolute; inset:0; display:grid; place-items:center;
   background:linear-gradient(145deg, rgba(237,234,228,.05), rgba(237,234,228,.02)), var(--ink-3);
@@ -668,4 +874,10 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
   .marquee ul{ animation:none; }
   body.page--video-bg .bg-video{ display:none; }
   body.page--video-bg .bg-video-fallback{ display:block; }
+  /* Reel: die räumliche Staffelung bleibt (das ist Layout, keine Bewegung),
+     aber Neigung, Weichzeichnung und Lichtreflex fallen weg. site.js
+     verzichtet zusätzlich auf Zeiger-Fahrt, Trägheit und Auto-Weiterschalten. */
+  .strip-viewport.is-spatial .card-inner{ transform:none !important; }
+  .reel-panel-3d{ transform:none !important; }
+  .reel-panel-3d::before{ display:none; }
 }
