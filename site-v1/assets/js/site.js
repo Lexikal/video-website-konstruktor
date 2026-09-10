@@ -267,7 +267,22 @@
 
   var reelModal = null, reelPanel = null, reelPanel3d = null, reelParts = null;
   var modalOpen = false, modalOrigin = null, modalLastFocus = null, modalBodyOverflow = '';
+  var modalNav = null;
   var tiltX = 0, tiltY = 0, tiltTX = 0, tiltTY = 0, tiltRaf = 0;
+
+  /* Nächste/vorherige Karte MIT Video, von fromIndex aus gesehen — leere
+     "In Vorbereitung"-Kategorien werden übersprungen, nicht angesteuert.
+     Reine Funktion (kein Seiteneffekt), damit sie auch für den reinen
+     Aktivierungs-Check der Pfeile benutzt werden kann. */
+  function findVideoNeighbor(cards, fromIndex, dir) {
+    var j = fromIndex;
+    for (var n = 0; n < cards.length; n++) {
+      j += dir;
+      if (j < 0 || j >= cards.length) return -1;
+      if (cards[j].dataset.video) return j;
+    }
+    return -1;
+  }
 
   function buildModal() {
     if (reelModal) return;
@@ -290,12 +305,15 @@
               '<img data-r="posterimg" alt="" decoding="async">' +
               '<span class="reel-bigplay" aria-hidden="true">&#9654;</span>' +
             '</button>' +
+            '<button class="reel-nav reel-nav--prev" type="button" data-r="prevBtn" aria-label="' + REEL_TEXT.prev + '">&lsaquo;</button>' +
+            '<button class="reel-nav reel-nav--next" type="button" data-r="nextBtn" aria-label="' + REEL_TEXT.next + '">&rsaquo;</button>' +
           '</div>' +
           '<div class="reel-info">' +
             '<div>' +
               '<h2 id="reel-title" data-r="title"></h2>' +
               '<p class="reel-role" data-r="role"></p>' +
               '<p class="reel-tagline" data-r="tagline"></p>' +
+              '<p class="reel-approach" data-r="approach"></p>' +
             '</div>' +
             '<div class="reel-side">' +
               '<ul class="reel-facts" data-r="facts"></ul>' +
@@ -318,6 +336,8 @@
       reelParts.video.play().catch(function () {});
       reelParts.video.focus();
     });
+    reelParts.prevBtn.addEventListener('click', function () { stepModal(-1); });
+    reelParts.nextBtn.addEventListener('click', function () { stepModal(1); });
     reelModal.addEventListener('keydown', onModalKey);
 
     /* Neigung + Lichtreflex. Während der Zeiger über dem Panel liegt, dämpft
@@ -364,6 +384,14 @@
 
   function onModalKey(e) {
     if (e.key === 'Escape') { e.stopPropagation(); closeModal(); return; }
+    /* Nur außerhalb des Video-Elements abfangen — sonst lässt sich die
+       native Fortschrittsleiste nicht mehr mit den Pfeiltasten bedienen. */
+    if (e.key === 'ArrowRight' && document.activeElement !== reelParts.video) {
+      e.stopPropagation(); stepModal(1); return;
+    }
+    if (e.key === 'ArrowLeft' && document.activeElement !== reelParts.video) {
+      e.stopPropagation(); stepModal(-1); return;
+    }
     if (e.key !== 'Tab') return;
     var f = modalFocusables();
     if (!f.length) return;
@@ -372,13 +400,11 @@
     else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
   }
 
-  function openModal(card) {
-    buildModal();
+  /* Füllt das Fenster mit den Daten einer Karte — sowohl für den ersten
+     Öffnen-Klick als auch für Vor/Zurück, ohne dabei die Wachstums-
+     Animation oder die Fokusfalle erneut anzustoßen. */
+  function fillModal(card) {
     var d = card.dataset;
-    if (!d.video) return false;
-
-    modalLastFocus = document.activeElement;
-    modalOrigin = card;
 
     /* Das Fenster erbt die Stimmung der gezeigten Arbeit — dieselbe Farbe,
        die schon hinter der Karte lag. */
@@ -389,8 +415,13 @@
     reelParts.title.textContent = d.titel || '';
     reelParts.role.textContent = d.rolle || '';
     reelParts.role.hidden = !d.rolle;
+    /* Aufgabe als kurze Einleitung, Ansatz als zweiter, ausführlicherer
+       Absatz — zusammen das, was auch auf der Projektseite unter diesen
+       Überschriften steht, statt nur eines Einzeilers. */
     reelParts.tagline.textContent = d.aufgabe || '';
     reelParts.tagline.hidden = !d.aufgabe;
+    reelParts.approach.textContent = d.ansatz || '';
+    reelParts.approach.hidden = !d.ansatz;
     reelParts.link.href = card.getAttribute('href') || '#';
 
     var facts = [];
@@ -410,11 +441,44 @@
       stageEl.appendChild(badge);
     }
 
+    /* Beim Wechsel auf eine andere Arbeit läuft ein eventuell schon
+       gestartetes Video nicht im Hintergrund weiter. */
+    reelParts.video.pause();
     reelParts.posterbtn.hidden = false;
     if (d.poster) { reelParts.posterimg.src = d.poster; reelParts.posterimg.hidden = false; }
     else { reelParts.posterimg.removeAttribute('src'); reelParts.posterimg.hidden = true; }
     reelParts.video.poster = d.poster || '';
     reelParts.video.src = d.video;
+  }
+
+  function updateModalNav() {
+    var hasPrev = !!(modalNav && modalNav.hasPrev());
+    var hasNext = !!(modalNav && modalNav.hasNext());
+    reelParts.prevBtn.hidden = !hasPrev;
+    reelParts.nextBtn.hidden = !hasNext;
+  }
+
+  /* Wechselt innerhalb des offenen Fensters zur nächsten/vorherigen Arbeit
+     mit Video — schiebt dabei auch das Karussell dahinter mit (goTo im
+     Aufrufer), damit Fenster und Reel synchron bleiben. */
+  function stepModal(dir) {
+    if (!modalOpen || !modalNav) return;
+    var nextCard = dir < 0 ? modalNav.prev() : modalNav.next();
+    if (!nextCard) return;
+    modalOrigin = nextCard;
+    fillModal(nextCard);
+    updateModalNav();
+  }
+
+  function openModal(card, nav) {
+    buildModal();
+    if (!card.dataset.video) return false;
+
+    modalLastFocus = document.activeElement;
+    modalOrigin = card;
+    modalNav = nav || null;
+    fillModal(card);
+    updateModalNav();
 
     modalBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -780,7 +844,27 @@
            gewohnt auf die Projektseite, statt ein leeres Fenster zu öffnen. */
         if (!card.dataset.video) return;
         e.preventDefault();
-        openModal(card);
+        if (typeof setPlaying === 'function') setPlaying(false);
+        /* Eigener veränderlicher Index fürs Fenster: Vor/Zurück im Fenster
+           bewegt nur ihn (und schiebt das Karussell mit über goTo), ohne
+           die äußere `current`-Variable des Karussells direkt anzufassen. */
+        var openIdx = i;
+        openModal(card, {
+          hasPrev: function () { return findVideoNeighbor(cards, openIdx, -1) !== -1; },
+          hasNext: function () { return findVideoNeighbor(cards, openIdx, 1) !== -1; },
+          prev: function () {
+            var j = findVideoNeighbor(cards, openIdx, -1);
+            if (j === -1) return null;
+            openIdx = j; goTo(openIdx);
+            return cards[openIdx];
+          },
+          next: function () {
+            var j = findVideoNeighbor(cards, openIdx, 1);
+            if (j === -1) return null;
+            openIdx = j; goTo(openIdx);
+            return cards[openIdx];
+          }
+        });
       });
 
       card.addEventListener('keydown', function (e) {

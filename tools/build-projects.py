@@ -222,6 +222,7 @@ def card(project, lang, prefix=""):
         ("data-rolle", text.get("rolle", "")),
         ("data-kunde", kunde_display),
         ("data-aufgabe", text.get("aufgabe", "")),
+        ("data-ansatz", text.get("ansatz", "")),
         ("data-modus", modus[lang]),
         ("data-modus-css", modus["css"]),
         ("data-video", f'{depth}{video}' if video else ""),

@@ -818,6 +818,23 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .reel-stage-poster:hover .reel-bigplay,
 .reel-stage-poster:focus-visible .reel-bigplay{ transform:scale(1.08); background:rgba(11,11,13,.68); }
 
+/* Vor/Zurück im offenen Trailer-Fenster — an den Rändern der Bühne, nicht
+   im Kopf: dort ist bereits Schließen/Timecode untergebracht, und hier
+   liegen sie an der Stelle, an der man sie bei einer Galerie erwartet. */
+.reel-nav{
+  position:absolute; top:50%; margin-top:-22px; z-index:5;
+  width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(11,11,13,.5); border:1px solid rgba(237,234,228,.24);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  color:var(--paper); font-size:1.3rem; line-height:1; cursor:pointer;
+  opacity:.75; transition:opacity .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+}
+.reel-nav:hover, .reel-nav:focus-visible{ opacity:1; border-color:rgba(237,234,228,.5); }
+.reel-nav:active{ transform:scale(.92); }
+.reel-nav--prev{ left:14px; }
+.reel-nav--next{ right:14px; }
+.reel-nav[hidden]{ display:none; }
+
 .reel-info{
   display:grid; gap:var(--s-4) var(--s-6); align-items:end;
   padding:clamp(18px,2.6vw,30px) clamp(16px,2.4vw,26px);
@@ -831,6 +848,9 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 }
 .reel-role{ margin:12px 0 0; color:var(--muted); font-size:.9rem; opacity:.85; }
 .reel-tagline{ margin:12px 0 0; max-width:58ch; font-size:.88rem; opacity:.62; line-height:1.6; }
+/* Etwas gedämpfter als die Einleitung — zweiter Absatz, nicht zweite
+   Schlagzeile. Beide zusammen sind Aufgabe + Ansatz von der Projektseite. */
+.reel-approach{ margin:10px 0 0; max-width:58ch; font-size:.86rem; opacity:.5; line-height:1.6; }
 .reel-facts{
   display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px;
   margin:0; padding:0; list-style:none;
