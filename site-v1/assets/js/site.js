@@ -189,6 +189,80 @@
     : { trailer:'Trailer', close:'Schließen', play:'Video abspielen', open:'Projektseite öffnen',
         year:'Jahr', role:'Rolle', type:'Art', client:'Kunde', carousel:'Ausgewählte Projekte' };
 
+  /* ---- Akzentfarbe aus dem Standbild der Arbeit lesen ----
+     Bewusst keine erfundene Marken-Akzentfarbe je Projekt: die Farbe kommt
+     aus dem Bild selbst, damit das Licht ringsum tatsächlich reflektiertes
+     Licht dieser Aufnahme ist. Nebeneffekt, der hier zählt: --real (warm)
+     und --ki (kalt) bleiben frei für ihre eigentliche Aufgabe, die
+     Kennzeichnung real gedreht vs. KI-generiert (Art. 50 KI-VO) — ein
+     dekorativ eingefärbter Hintergrund würde die verwässern.
+     Läuft lokal über ein 32x32-Canvas; kein Netzzugriff, keine Bibliothek.
+     Überschreibbar je Projekt über data-accent, falls ein Standbild mal eine
+     unbrauchbare Farbe liefert. */
+  var REEL_NEUTRAL = [150, 155, 165];
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), h = 0, s = 0, l = (mx + mn) / 2;
+    if (mx !== mn) {
+      var d = mx - mn;
+      s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      if (mx === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (mx === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h /= 6;
+    }
+    return [h, s, l];
+  }
+  function hslToRgb(h, s, l) {
+    if (s === 0) { var v = Math.round(l * 255); return [v, v, v]; }
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    var f = function (t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    return [Math.round(f(h + 1 / 3) * 255), Math.round(f(h) * 255), Math.round(f(h - 1 / 3) * 255)];
+  }
+  function hexToRgb(hex) {
+    var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(String(hex).trim());
+    return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : null;
+  }
+  function readAccent(src, cb) {
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var n = 32, cv = document.createElement('canvas');
+        cv.width = n; cv.height = n;
+        var ctx = cv.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, n, n);
+        var d = ctx.getImageData(0, 0, n, n).data;
+        var best = null, bestScore = -1;
+        for (var i = 0; i < d.length; i += 4) {
+          var hsl = rgbToHsl(d[i], d[i + 1], d[i + 2]);
+          /* Kräftige, mittelhelle Pixel gewinnen — nicht das Schwarz des
+             Hintergrunds und nicht ausgefressene Lichter. */
+          var score = hsl[1] * (1 - Math.abs(hsl[2] - 0.55) * 1.5);
+          if (score > bestScore) { bestScore = score; best = hsl; }
+        }
+        if (!best || bestScore <= 0) { cb(null); return; }
+        /* Auf brauchbares Streulicht normieren: zu blass verschwindet, zu
+           grell frisst die Kennzeichnungsfarben an. */
+        cb(hslToRgb(best[0],
+          Math.max(0.34, Math.min(0.72, best[1])),
+          Math.max(0.54, Math.min(0.68, best[2]))));
+      } catch (err) {
+        /* Getaintetes Canvas (z. B. per file:// geöffnet) — dann eben neutral. */
+        cb(null);
+      }
+    };
+    img.onerror = function () { cb(null); };
+    img.src = src;
+  }
+
   var reelModal = null, reelPanel = null, reelPanel3d = null, reelParts = null;
   var modalOpen = false, modalOrigin = null, modalLastFocus = null, modalBodyOverflow = '';
   var tiltX = 0, tiltY = 0, tiltTX = 0, tiltTY = 0, tiltRaf = 0;
@@ -303,6 +377,11 @@
 
     modalLastFocus = document.activeElement;
     modalOrigin = card;
+
+    /* Das Fenster erbt die Stimmung der gezeigten Arbeit — dieselbe Farbe,
+       die schon hinter der Karte lag. */
+    reelPanel.style.setProperty('--accent',
+      card.style.getPropertyValue('--a') || '150,155,165');
 
     reelParts.tag.textContent = REEL_TEXT.trailer + (d.modus ? ' · ' + d.modus : '');
     reelParts.title.textContent = d.titel || '';
@@ -441,6 +520,34 @@
        absolut positioniert übereinanderliegen. */
     if (viewport) viewport.classList.add('is-spatial');
 
+    /* Atmosphäre-Schichten: Bloom der aktiven Arbeit, Bodenreflex, Vignette,
+       Korn. Rein dekorativ, deshalb erst hier erzeugt und aus dem
+       Accessibility-Baum genommen. */
+    var atmos = null;
+    if (viewport) {
+      atmos = document.createElement('div');
+      atmos.className = 'reel-atmos';
+      atmos.setAttribute('aria-hidden', 'true');
+      atmos.innerHTML =
+        '<div class="reel-bloom"></div><div class="reel-floor"></div>' +
+        '<div class="reel-vignette"></div><div class="reel-grain"></div>';
+      viewport.insertBefore(atmos, viewport.firstChild);
+    }
+
+    /* Je Karte eine Akzentfarbe — aus data-accent, sonst aus dem Standbild. */
+    var accents = cards.map(function () { return REEL_NEUTRAL.slice(); });
+    cards.forEach(function (c, i) {
+      var setIt = function () { c.style.setProperty('--a', accents[i].join(',')); };
+      var explicit = c.dataset.accent && hexToRgb(c.dataset.accent);
+      if (explicit) { accents[i] = explicit; setIt(); return; }
+      if (!c.dataset.poster) { setIt(); return; }
+      setIt();
+      readAccent(c.dataset.poster, function (rgb) {
+        if (rgb) { accents[i] = rgb; setIt(); }
+      });
+    });
+    var curAccent = REEL_NEUTRAL.slice();
+
     stage.setAttribute('role', 'group');
     stage.setAttribute('aria-label', REEL_TEXT.carousel);
     if (!stage.hasAttribute('tabindex')) stage.tabIndex = -1;
@@ -468,9 +575,47 @@
           'translate(-50%,-50%) translate3d(' + (off * sp).toFixed(1) + 'px,0,' +
           (-a * 200).toFixed(1) + 'px) rotateY(' + (-off * 5).toFixed(2) + 'deg) scale(' + scale.toFixed(4) + ')';
         c.style.opacity = op.toFixed(3);
-        c.style.filter = blur > 0.05 ? 'blur(' + blur.toFixed(2) + 'px)' : '';
+        c.style.filter = blur > 0.05
+          ? 'blur(' + blur.toFixed(2) + 'px) saturate(' + Math.max(0.6, 1 - a * 0.16).toFixed(2) + ')'
+          : '';
         c.style.zIndex = String(100 - Math.round(a * 10));
         c.style.pointerEvents = a < 2.6 ? 'auto' : 'none';
+        /* Lichtabgabe: Mitte voll, direkte Nachbarn ~44 %, weiter außen ~10 %.
+           Nur schreiben, wenn sich der Wert merklich ändert — sonst löst jede
+           Frame-Zuweisung einen Repaint des weichen Scheins aus. */
+        var lit = Math.max(0, Math.pow(1 - a * 0.34, 2));
+        if (Math.abs((c._lit == null ? -1 : c._lit) - lit) > 0.02) {
+          c.style.setProperty('--lit', lit.toFixed(2));
+          c._lit = lit;
+        }
+      }
+    }
+
+    /* Stimmung des ganzen Bereichs auf die aktive Arbeit ziehen. 0.07 pro
+       Frame entspricht rund 700 ms bis zur neuen Farbe. */
+    function driftAccent() {
+      /* Bloom hängt an der aktiven Karte: solange die Feder noch läuft, wandert
+         das Licht mit ihr, statt starr in der Mitte zu kleben. */
+      if (atmos) {
+        var bx = (current - pos) * spacing();
+        if (Math.abs((atmos._bx == null ? 1e9 : atmos._bx) - bx) > 1) {
+          atmos.style.setProperty('--bloom-x', bx.toFixed(0) + 'px');
+          atmos._bx = bx;
+        }
+      }
+      var t = accents[current] || REEL_NEUTRAL, moved = false;
+      for (var k = 0; k < 3; k++) {
+        var d = t[k] - curAccent[k];
+        if (d === 0) continue;
+        /* Bei reduced-motion ohne Überblendung direkt umschalten — die
+           Farbe bleibt, die 700-ms-Bewegung fällt weg. */
+        if (reduce || Math.abs(d) <= 0.6) curAccent[k] = t[k];
+        else curAccent[k] += d * 0.07;
+        moved = true;
+      }
+      if (moved && viewport) {
+        viewport.style.setProperty('--accent',
+          Math.round(curAccent[0]) + ',' + Math.round(curAccent[1]) + ',' + Math.round(curAccent[2]));
       }
     }
 
@@ -537,13 +682,16 @@
           render();
           updateActive();
         }
+        driftAccent();
       }
       window.requestAnimationFrame(frame);
     }
 
     /* --- Zeiger: Richtung und Tempo aus der horizontalen Position --- */
+    var lastPX = null, lastPY = null;
     stage.addEventListener('pointermove', function (e) {
       if (e.pointerType === 'touch' || dragging) return;
+      lastPX = e.clientX; lastPY = e.clientY;
       var r = stage.getBoundingClientRect();
       pointerX = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
       pointerActive = true;
@@ -585,13 +733,33 @@
     /* --- Karten: Hover-Neigung, Klick öffnet den Trailer --- */
     cards.forEach(function (card, i) {
       var inner = card.querySelector('.card-inner');
+      var media = card.querySelector('.card-media');
+
+      /* Zeiger auf eine Karte wählt sie sofort aus — die Feder bekommt nur ein
+         neues Ziel, keine Warteschlange. Wer schnell über A, B, C fährt,
+         landet direkt auf C. */
+      card.addEventListener('pointerenter', function (e) {
+        if (e.pointerType === 'touch' || dragging) return;
+        /* Wenn sich die Karte unter einem stehenden Zeiger hergeschoben hat,
+           ist das kein Zeigerwechsel — sonst schaukelt sich die Auswahl auf. */
+        if (e.clientX === lastPX && e.clientY === lastPY) return;
+        if (i !== (snapTo === null ? current : snapTo)) goTo(i);
+      });
+
       if (inner && !reduce) {
         card.addEventListener('pointermove', function (e) {
           if (e.pointerType === 'touch' || i !== current) return;
           var r = card.getBoundingClientRect();
-          inner.style.setProperty('--tilt-y', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
-          inner.style.setProperty('--tilt-x', (-(((e.clientY - r.top) / r.height) * 2 - 1)).toFixed(3));
+          var nx = ((e.clientX - r.left) / r.width);
+          var ny = ((e.clientY - r.top) / r.height);
+          inner.style.setProperty('--tilt-y', (nx * 2 - 1).toFixed(3));
+          inner.style.setProperty('--tilt-x', (-(ny * 2 - 1)).toFixed(3));
           inner.style.setProperty('--hover-scale', '1.05');
+          /* Wanderndes Glanzlicht auf dem Glas. */
+          if (media) {
+            media.style.setProperty('--mx', (nx * 100).toFixed(1) + '%');
+            media.style.setProperty('--my', (ny * 100).toFixed(1) + '%');
+          }
         });
         card.addEventListener('pointerleave', function () {
           inner.style.setProperty('--tilt-y', '0');

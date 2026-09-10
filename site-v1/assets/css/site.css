@@ -376,14 +376,55 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .card:hover{ border-color:var(--line-2); box-shadow:0 0 0 1px var(--line-2), 0 18px 40px -20px rgba(0,0,0,.6); }
 
 /* ---------- Projekt-Reel: räumliches Karussell ----------
-   Karten stehen auf einer Bühne mit Perspektive statt in einer Scroll-Leiste:
-   die mittlere Karte ist vorn, groß und scharf, die Nachbarn treten nach
-   hinten weg. Position/Skalierung/Deckkraft setzt site.js pro Frame als
-   Inline-Transform — hier steht nur, wie eine Karte aussieht, nicht wo sie
-   steht. Alles unter [data-reel], damit die Labor-Leiste unberührt bleibt. */
+   Karten stehen auf einer Bühne mit Perspektive statt in einer Scroll-Leiste.
+   Position/Skalierung/Deckkraft setzt site.js pro Frame als Inline-Transform.
+
+   Licht: --accent ist die Farbe der gerade aktiven Arbeit, aus deren eigenem
+   Standbild ausgelesen (site.js) und weich überblendet. Das ist bewusst kein
+   erfundener Marken-Akzent, sondern reflektiertes Licht aus dem Material —
+   dasselbe, was an einer Grading-Wand passiert. Warm/Kalt (--real/--ki)
+   bleiben dadurch frei für ihre eigentliche Aufgabe: die Kennzeichnung
+   real gedreht vs. KI-generiert. Farbe im Interface kommt aus der Aufnahme.
+
+   --a   = Akzent der einzelnen Karte (rgb-Tripel)
+   --lit = wie stark diese Karte gerade leuchtet (0..1, aus der Distanz zur Mitte) */
+.strip-viewport.is-spatial{ position:relative; --accent:150,155,165; }
+
+/* Atmosphäre unter den Karten: Grundton, Bloom der aktiven Arbeit,
+   Bodenreflex, Vignette, Korn. Rein dekorativ, deshalb erst per JS erzeugt. */
+.reel-atmos{ position:absolute; inset:-8% 0 -4%; z-index:0; pointer-events:none; overflow:hidden; }
+.reel-bloom{
+  position:absolute; left:50%; top:42%;
+  width:min(1000px, 78vw); height:min(760px, 62vh);
+  margin-left:calc(min(1000px, 78vw) / -2); margin-top:calc(min(760px, 62vh) / -2);
+  background:radial-gradient(closest-side,
+    rgba(var(--accent), .22), rgba(var(--accent), .10) 45%, transparent 72%);
+  filter:blur(60px);
+  transform:translate3d(var(--bloom-x, 0px), 0, 0);
+}
+.reel-floor{
+  position:absolute; left:50%; bottom:2%;
+  width:min(900px, 72vw); height:150px; margin-left:calc(min(900px, 72vw) / -2);
+  background:radial-gradient(60% 100% at 50% 0%,
+    rgba(var(--accent), .17), rgba(var(--accent), .05) 42%, transparent 74%);
+  filter:blur(34px);
+  transform:translate3d(var(--bloom-x, 0px), 0, 0);
+}
+.reel-vignette{
+  position:absolute; inset:0;
+  background:
+    radial-gradient(115% 78% at 50% 46%, transparent 42%, rgba(11,11,13,.72) 100%),
+    linear-gradient(90deg, var(--ink) 0%, rgba(11,11,13,0) 15%, rgba(11,11,13,0) 85%, var(--ink) 100%);
+}
+/* Korn hält die großen weichen Verläufe davon ab, in Banding zu kippen. */
+.reel-grain{
+  position:absolute; inset:0; opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
 .strip-viewport.is-spatial .strip[data-reel]{
   --reel-card-w:clamp(230px, 27vw, 360px);
-  display:block; position:relative; overflow:hidden;
+  display:block; position:relative; z-index:1; overflow:hidden;
   height:var(--reel-stage-h, 520px);
   padding:0; margin:0;
   perspective:1500px; perspective-origin:50% 44%;
@@ -393,71 +434,117 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 }
 .strip-viewport.is-spatial .strip[data-reel]:active{ cursor:grabbing; }
 .strip-viewport.is-spatial .strip[data-reel]::-webkit-scrollbar{ display:none; }
-/* Atmosphäre: die Bühne dunkelt zu den Rändern ab, damit die abgeblendeten
-   Karten nicht abgeschnitten wirken, sondern in Tiefe verschwinden.
-   Bewusst neutral-kühles Grau, kein Farbakzent — Warm/Kalt sind auf dieser
-   Seite als Kennzeichnung belegt (real vs. KI) und dürfen nicht als
-   Dekoration auftauchen. */
-.strip-viewport.is-spatial .strip[data-reel]::after{
-  content:""; position:absolute; inset:0; pointer-events:none; z-index:60;
-  background:
-    linear-gradient(90deg, var(--ink) 0%, rgba(11,11,13,0) 16%, rgba(11,11,13,0) 84%, var(--ink) 100%),
-    radial-gradient(70% 120% at 50% 42%, rgba(237,234,228,.05), transparent 62%);
-}
+
 .strip-viewport.is-spatial .card{
   position:absolute; top:50%; left:50%; z-index:1;
   width:var(--reel-card-w); max-width:none; flex:none; margin:0;
-  border-radius:18px; overflow:hidden;
-  background:rgba(19,19,23,.78);
-  border:1px solid rgba(237,234,228,.10);
-  box-shadow:0 30px 70px -30px rgba(0,0,0,.9);
+  border:0; background:none; border-radius:20px;
   transform-origin:50% 50%;
   will-change:transform, opacity;
-  /* Kein transition auf transform/opacity: die setzt der rAF-Loop jeden
-     Frame selbst, eine CSS-Transition würde dagegen anlaufen und schmieren. */
-  transition:border-color .4s var(--ease), box-shadow .4s var(--ease);
+  /* Kein transition auf transform/opacity: die setzt der rAF-Loop jeden Frame
+     selbst, eine CSS-Transition würde dagegen anlaufen und schmieren. */
+  transition:none;
 }
-/* Der innere Träger nimmt Hover-Skalierung und Neigung auf, damit er sich
-   nicht mit dem Karussell-Transform der äußeren Karte streitet. */
+/* Lichtabgabe der einzelnen Karte. Liegt hinter der Karte und ragt bewusst
+   darüber hinaus. Bewegt wird nur die Deckkraft (--lit) — das ist billig,
+   im Gegensatz zu einem pro Frame neu gezeichneten großen box-shadow. */
+.strip-viewport.is-spatial .card::before{
+  content:""; position:absolute; inset:-22% -18%; z-index:-1; pointer-events:none;
+  background:radial-gradient(closest-side,
+    rgba(var(--a, 150,155,165), .55), rgba(var(--a, 150,155,165), .18) 52%, transparent 76%);
+  opacity:var(--lit, 0);
+  transition:opacity .5s var(--ease);
+}
 .strip-viewport.is-spatial .card-inner{
-  display:block; transform-style:preserve-3d;
+  display:block; position:relative; border-radius:20px; overflow:hidden;
+  background:rgba(19,19,23,.82);
   transform:
     perspective(900px)
     rotateX(calc(var(--tilt-x, 0) * 3deg))
     rotateY(calc(var(--tilt-y, 0) * 4deg))
     scale(var(--hover-scale, 1));
-  transition:transform .45s cubic-bezier(.16,1,.3,1);
+  /* Schnell genug, dass Hover sofort antwortet (Vorgabe 180–250 ms). */
+  transition:transform .24s cubic-bezier(.16,1,.3,1), box-shadow .3s var(--ease);
+  /* Geschichtete Glaskante: durchscheinender Rand, innerer Lichtsaum,
+     hellere Oberkante, farbiger Außenschein, tiefer Schatten. */
+  box-shadow:
+    inset 0 0 0 1px rgba(237,234,228,.08),
+    inset 0 1px 0 0 rgba(237,234,228,.10),
+    0 24px 60px -28px rgba(0,0,0,.9);
 }
-.strip-viewport.is-spatial .card[data-active="true"]{
-  border-color:rgba(237,234,228,.22);
-  box-shadow:0 40px 90px -30px rgba(0,0,0,.95), 0 0 0 1px rgba(237,234,228,.06);
+.strip-viewport.is-spatial .card[data-active="true"] .card-inner{
+  box-shadow:
+    inset 0 0 0 1px rgba(237,234,228,.18),
+    inset 0 1px 0 0 rgba(237,234,228,.28),
+    inset 0 -30px 60px -30px rgba(var(--a, 150,155,165), .35),
+    0 0 0 1px rgba(var(--a, 150,155,165), .18),
+    0 34px 80px -30px rgba(0,0,0,.95),
+    0 0 60px -10px rgba(var(--a, 150,155,165), .30);
 }
-.strip-viewport.is-spatial .card:focus-visible{ outline:2px solid var(--real); outline-offset:4px; }
-/* Randlicht auf der Glaskante — nur auf der aktiven Karte, sonst wird die
-   Bühne unruhig. */
+.strip-viewport.is-spatial .card:focus-visible{ outline:2px solid var(--real); outline-offset:6px; }
+
+/* Streiflicht auf der Oberkante — die Kante fängt Licht, statt eine Linie zu sein. */
+.strip-viewport.is-spatial .card-media::before{
+  content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(168deg, rgba(237,234,228,.16), transparent 34%);
+  opacity:calc(.35 + var(--lit, 0) * .65);
+}
+/* Wanderndes Glanzlicht auf der aktiven Karte (Zeigerposition, site.js). */
 .strip-viewport.is-spatial .card[data-active="true"] .card-media::after{
-  content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
-  background:linear-gradient(160deg, rgba(237,234,228,.14), transparent 38%);
+  content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:radial-gradient(260px circle at var(--mx, 50%) var(--my, 40%),
+    rgba(237,234,228,.13), transparent 62%);
+  opacity:0; transition:opacity .4s var(--ease);
 }
+.strip-viewport.is-spatial .card[data-active="true"]:hover .card-media::after{ opacity:1; }
+
 .strip-viewport.is-spatial .card-txt{
-  background:rgba(11,11,13,.55);
+  position:relative;
+  background:linear-gradient(180deg, rgba(11,11,13,.42), rgba(11,11,13,.72));
   -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-  border-top:1px solid rgba(237,234,228,.08);
+  border-top:1px solid rgba(237,234,228,.07);
+  padding:var(--s-4) var(--s-5) var(--s-5);
 }
-/* Play-Andeutung auf der aktiven Karte mit Video: sagt, dass ein Klick den
-   Trailer öffnet, statt es raten zu lassen. */
+/* Typografische Hierarchie: der Titel trägt, die Metazeile ordnet nur ein.
+   Im Reel bewusst gemischte Schreibung und leichteres Gewicht — ruhiger als
+   die Versalien des restlichen Seitenrasters, passend zum Kinocharakter. */
+.strip-viewport.is-spatial .card-txt .svc-no{
+  font-size:.6rem; letter-spacing:.24em; opacity:.6; display:block;
+}
+.strip-viewport.is-spatial .card-txt h3{
+  font-family:var(--display); font-weight:500; text-transform:none;
+  font-size:clamp(1.05rem, 1.5vw, 1.28rem); letter-spacing:.004em;
+  line-height:1.24; margin:10px 0 7px; color:var(--paper);
+}
+.strip-viewport.is-spatial .card-txt p{
+  font-size:.79rem; line-height:1.5; opacity:.55;
+}
+
+/* Play-Steuerung auf der aktiven Karte: Glasknopf, kein Browser-Button. */
 .card-play{ display:none; }
 .strip-viewport.is-spatial .card-play{
   position:absolute; left:50%; top:50%; z-index:3;
-  width:56px; height:56px; margin:-28px 0 0 -28px; border-radius:50%;
+  width:76px; height:76px; margin:-38px 0 0 -38px; border-radius:50%;
   display:grid; place-items:center; pointer-events:none;
-  background:rgba(11,11,13,.55); border:1px solid rgba(237,234,228,.35);
-  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
-  color:var(--paper); font-size:.85rem; padding-left:3px;
-  opacity:0; transform:scale(.86);
-  transition:opacity .4s var(--ease), transform .4s cubic-bezier(.16,1,.3,1);
+  background:radial-gradient(120% 120% at 50% 15%, rgba(237,234,228,.16), rgba(11,11,13,.55) 60%);
+  border:1px solid rgba(237,234,228,.42);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  box-shadow:
+    inset 0 1px 0 0 rgba(237,234,228,.35),
+    0 0 30px -4px rgba(var(--a, 150,155,165), .5);
+  color:var(--paper); font-size:1rem; padding-left:4px;
+  opacity:0; transform:scale(.84);
+  transition:opacity .26s var(--ease), transform .26s cubic-bezier(.16,1,.3,1),
+             box-shadow .3s var(--ease);
 }
 .strip-viewport.is-spatial .card[data-active="true"] .card-play{ opacity:1; transform:scale(1); }
+.strip-viewport.is-spatial .card[data-active="true"]:hover .card-play{
+  transform:scale(1.08);
+  border-color:rgba(237,234,228,.6);
+  box-shadow:
+    inset 0 1px 0 0 rgba(237,234,228,.45),
+    0 0 42px -2px rgba(var(--a, 150,155,165), .7);
+}
 
 /* ---------- Reel-Deck: Schnitt-Bedienleiste unter dem Streifen ----------
    Ohne JS steuert das Deck nichts — dann bleibt es aus, und die Leiste ist
@@ -510,14 +597,32 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
   position:relative; z-index:1;
   width:min(82vw, 1240px); max-height:calc(100vh - clamp(32px,8vw,96px));
   transform-origin:50% 50%; will-change:transform, opacity;
+  --accent:150,155,165;
 }
+/* Bloom der gezeigten Arbeit hinter dem Fenster — dasselbe Prinzip wie im
+   Reel: das Licht kommt aus dem Material, nicht aus einer UI-Farbe. */
+.reel-panel::before{
+  content:""; position:absolute; inset:-14% -10%; z-index:-1; pointer-events:none;
+  background:radial-gradient(closest-side,
+    rgba(var(--accent), .30), rgba(var(--accent), .10) 50%, transparent 74%);
+  filter:blur(56px);
+  opacity:0; transition:opacity .7s var(--ease);
+}
+.reel-modal[data-open="true"] .reel-panel::before{ opacity:1; }
 .reel-panel-3d{
   display:flex; flex-direction:column; max-height:inherit;
   border-radius:32px; overflow:hidden; position:relative;
   background:rgba(16,16,20,.86);
   -webkit-backdrop-filter:blur(28px) saturate(1.1); backdrop-filter:blur(28px) saturate(1.1);
   border:1px solid rgba(237,234,228,.13);
-  box-shadow:0 60px 140px -40px rgba(0,0,0,.95), 0 0 0 1px rgba(237,234,228,.04);
+  /* Randbeleuchtung: heller Lichtsaum oben, farbiges Rücklicht unten,
+     farbiger Außenschein, tiefer Schatten. */
+  box-shadow:
+    inset 0 1px 0 0 rgba(237,234,228,.26),
+    inset 0 -60px 120px -60px rgba(var(--accent), .40),
+    0 0 0 1px rgba(var(--accent), .14),
+    0 60px 140px -40px rgba(0,0,0,.95),
+    0 0 90px -20px rgba(var(--accent), .30);
   transform:
     perspective(1200px)
     rotateX(calc(var(--tilt-x, 0) * 3deg))
@@ -592,19 +697,23 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
   padding:clamp(18px,2.6vw,30px) clamp(16px,2.4vw,26px);
   overflow-y:auto; min-height:0;
 }
+/* Hierarchie: der Titel trägt, alles darunter ordnet nur ein. */
 .reel-info h2{
-  font-family:var(--display); font-weight:800; text-transform:uppercase;
-  font-size:clamp(1.4rem,3vw,2.3rem); letter-spacing:-.03em; margin:0;
-  text-wrap:balance;
+  font-family:var(--display); font-weight:500; text-transform:none;
+  font-size:clamp(1.5rem,3.2vw,2.5rem); letter-spacing:.004em; line-height:1.14;
+  margin:0; text-wrap:balance;
 }
-.reel-role{ margin:10px 0 0; color:var(--muted); font-size:.95rem; }
-.reel-tagline{ margin:12px 0 0; max-width:58ch; font-size:.95rem; }
+.reel-role{ margin:12px 0 0; color:var(--muted); font-size:.9rem; opacity:.85; }
+.reel-tagline{ margin:12px 0 0; max-width:58ch; font-size:.88rem; opacity:.62; line-height:1.6; }
 .reel-facts{
-  display:flex; flex-wrap:wrap; gap:8px 18px; margin:0; padding:0; list-style:none;
-  font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--muted);
+  display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px;
+  margin:0; padding:0; list-style:none;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); opacity:.8;
 }
-.reel-facts b{ color:var(--paper); font-weight:600; }
+/* Trennpunkte statt Rahmen — leiser als eine Chip-Reihe. */
+.reel-facts li + li::before{ content:"·"; margin-right:12px; opacity:.5; }
+.reel-facts b{ color:var(--paper); font-weight:500; }
 .reel-side{ display:grid; gap:var(--s-4); align-content:end; }
 @media (min-width:860px){
   .reel-info{ grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); }
