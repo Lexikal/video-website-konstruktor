@@ -171,89 +171,132 @@
     });
   }
 
-  /* ---- Filmstreifen: langsamer Auto-Scroll ----
-     Nur auf .strip[data-auto-scroll]. Karten werden einmal geklont (rein
-     dekorativ, aus Tab-Reihenfolge und Screenreadern entfernt) für eine
-     nahtlose Schleife. Pausiert bei Hover, Touch, Tastatur-Fokus und
-     während der Nutzer selbst scrollt; steht komplett still bei
-     reduced-motion — dann bleibt nur normales Wisch-/Scroll-Verhalten. */
-  $$('.strip[data-auto-scroll]').forEach(function (strip) {
-    if (reduce) return;
+  /* ---- Projekt-Reel: Fokus-Karussell + Schnitt-Deck ----
+     Nur auf .strip[data-reel]. Karten skalieren nach Abstand zur Mitte —
+     wie eine Sichtungs-Leiste im Schnittprogramm, nicht wie ein Musik-
+     Player-Karussell. Steht bei reduced-motion optisch still (keine
+     Skalierung, kein automatisches Weiterspringen ohne Nutzeraktion),
+     bleibt aber bedienbar: Pfeile/Punkte funktionieren weiterhin, nur
+     ohne Animation. */
+  $$('.strip[data-reel]').forEach(function (strip) {
     var cards = $$('.card', strip);
-    if (cards.length < 2) return;
+    if (!cards.length) return;
+    var viewport = strip.closest('.strip-viewport');
+    var deck = viewport ? viewport.querySelector('.reel-deck') : null;
 
-    var clones = cards.map(function (c) {
-      var clone = c.cloneNode(true);
-      clone.setAttribute('aria-hidden', 'true');
-      $$('a,button,input,[tabindex]', clone).forEach(function (el) { el.tabIndex = -1; });
-      if (clone.tagName === 'A') clone.removeAttribute('href');
-      strip.appendChild(clone);
-      return clone;
-    });
-    var loopWidth = clones[0].offsetLeft - cards[0].offsetLeft;
-    if (!(loopWidth > 0)) return;
-
-    var speed = 0.6; // px/Frame — bewusst langsam, kein Karussell-Rennen
-    var paused = false, resumeTimer = null;
-    // scrollLeft wird vom Browser auf ganze Pixel gerundet — ein Schritt
-    // unter 1px würde beim Zurücklesen sofort wieder verschluckt. Deshalb
-    // eigene Fließkomma-Position mitführen und nur zum Setzen benutzen.
-    var pos = strip.scrollLeft;
-    strip.classList.add('is-auto');
-    var wrap = function (p) {
-      p = p % loopWidth;
-      return p < 0 ? p + loopWidth : p;
-    };
-
-    var resumeSoon = function () {
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(function () { paused = false; }, 1800);
-    };
-    strip.addEventListener('pointerenter', function () { paused = true; });
-    strip.addEventListener('pointerleave', resumeSoon);
-    strip.addEventListener('focusin', function () { paused = true; });
-    strip.addEventListener('focusout', resumeSoon);
-    strip.addEventListener('touchstart', function () { paused = true; }, { passive: true });
-    strip.addEventListener('touchend', resumeSoon, { passive: true });
-    strip.addEventListener('wheel', function () { paused = true; resumeSoon(); }, { passive: true });
-
-    // Pfeile: Hover/Fokus schiebt schneller in die Richtung (überstimmt die
-    // Pause — genau dafür sind sie da, falls jemand ein Projekt verpasst hat
-    // und nicht 1,8s auf den Auto-Scroll warten will), Klick springt eine
-    // Karte weiter/zurück. Nach dem Verlassen läuft das normale Ambiente-
-    // Tempo sofort weiter, kein Warten nötig.
-    var manualDir = 0;
-    var navSpeed = speed * 8;
-    var bindNav = function (btn, dir) {
-      if (!btn) return;
-      btn.addEventListener('pointerenter', function () { manualDir = dir; });
-      btn.addEventListener('pointerleave', function () { manualDir = 0; });
-      btn.addEventListener('focus', function () { manualDir = dir; });
-      btn.addEventListener('blur', function () { manualDir = 0; });
-      btn.addEventListener('click', function () {
-        var gap = parseFloat(getComputedStyle(strip).columnGap) || 16;
-        var step = cards[0].getBoundingClientRect().width + gap;
-        pos = wrap(pos + dir * step);
-        strip.scrollLeft = pos;
+    var applyFocus = function () {
+      if (reduce) return;
+      var mid = strip.clientWidth / 2;
+      cards.forEach(function (c) {
+        var cardMid = c.offsetLeft + c.offsetWidth / 2 - strip.scrollLeft;
+        var t = Math.min(1, Math.abs(cardMid - mid) / mid);
+        c.style.transform = 'scale(' + (1 - t * 0.16).toFixed(3) + ')';
+        c.style.opacity = (1 - t * 0.55).toFixed(3);
       });
     };
-    var viewport = strip.closest('.strip-viewport');
-    if (viewport) {
-      bindNav(viewport.querySelector('.strip-nav--prev'), -1);
-      bindNav(viewport.querySelector('.strip-nav--next'), 1);
-    }
 
-    var step = function () {
-      if (manualDir !== 0) {
-        pos = wrap(pos + manualDir * navSpeed);
-        strip.scrollLeft = pos;
-      } else if (!paused) {
-        pos = wrap(pos + speed);
-        strip.scrollLeft = pos;
-      }
-      window.requestAnimationFrame(step);
+    var nearestIndex = function () {
+      var target = strip.scrollLeft + strip.clientWidth / 2;
+      var best = 0, bestDist = Infinity;
+      cards.forEach(function (c, i) {
+        var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - target);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      return best;
     };
-    window.requestAnimationFrame(step);
+
+    var current = 0;
+    var goTo = function (i) {
+      i = Math.max(0, Math.min(cards.length - 1, i));
+      var c = cards[i];
+      var target = c.offsetLeft + c.offsetWidth / 2 - strip.clientWidth / 2;
+      strip.scrollTo({ left: target, behavior: reduce ? 'auto' : 'smooth' });
+    };
+
+    var scrollTicking = false;
+    var onScroll = function () {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      window.requestAnimationFrame(function () {
+        applyFocus();
+        updateDeck();
+        scrollTicking = false;
+      });
+    };
+    strip.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    // Start exakt auf Karte 0 zentriert, statt auf dem, was scrollLeft:0
+    // zufällig am nächsten liegt (hängt vom Seiten-Padding ab).
+    strip.scrollLeft = cards[0].offsetLeft + cards[0].offsetWidth / 2 - strip.clientWidth / 2;
+    applyFocus();
+
+    if (!deck) return;
+    var prevBtn = deck.querySelector('.reel-btn--prev');
+    var nextBtn = deck.querySelector('.reel-btn--next');
+    var playBtn = deck.querySelector('.reel-btn--play');
+    var indexEl = deck.querySelector('[data-reel-index]');
+    var totalEl = deck.querySelector('[data-reel-total]');
+    var labelEl = deck.querySelector('[data-reel-label]');
+    var dotsWrap = deck.querySelector('[data-reel-dots]');
+
+    var dots = cards.map(function (c, i) {
+      var isEmpty = c.classList.contains('card--empty');
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'reel-dot' + (isEmpty ? ' reel-dot--empty' : '');
+      var title = c.querySelector('h3');
+      dot.setAttribute('aria-label', title ? title.textContent : 'Projekt ' + (i + 1));
+      if (isEmpty) {
+        dot.disabled = true;
+      } else {
+        dot.addEventListener('click', function () { goTo(i); setPlaying(false); });
+      }
+      dotsWrap.appendChild(dot);
+      return dot;
+    });
+    if (totalEl) totalEl.textContent = String(cards.length).padStart(2, '0');
+
+    var updateDeck = function () {
+      current = nearestIndex();
+      if (indexEl) indexEl.textContent = String(current + 1).padStart(2, '0');
+      var label = cards[current].querySelector('.svc-no');
+      if (labelEl) labelEl.textContent = label ? label.textContent : '';
+      dots.forEach(function (d, j) { d.setAttribute('aria-current', String(j === current)); });
+    };
+    updateDeck();
+
+    prevBtn.addEventListener('click', function () { goTo(current - 1); setPlaying(false); });
+    nextBtn.addEventListener('click', function () { goTo(current + 1); setPlaying(false); });
+
+    // Play/Pause ist der einzige dauerhafte Zustand; Hover/Fokus auf einer
+    // Karte pausiert nur den Timer (Video-Vorschau soll nicht weggeschoben
+    // werden) und läuft danach von selbst weiter, ohne den Play-Knopf
+    // umzuschalten.
+    var timer = null, playing = false;
+    var stopTimer = function () { clearInterval(timer); timer = null; };
+    var startTimer = function () {
+      stopTimer();
+      timer = setInterval(function () {
+        goTo(current + 1 >= cards.length ? 0 : current + 1);
+      }, 4200);
+    };
+    var setPlaying = function (v) {
+      playing = v;
+      stopTimer();
+      if (playing) startTimer();
+      playBtn.textContent = playing ? '❙❙' : '▶';
+      playBtn.setAttribute('aria-pressed', String(playing));
+      playBtn.setAttribute('aria-label', playing ? 'Pausieren' : 'Automatisch weiter');
+    };
+    playBtn.addEventListener('click', function () { setPlaying(!playing); });
+    setPlaying(!reduce);
+
+    cards.forEach(function (c) {
+      c.addEventListener('pointerenter', stopTimer);
+      c.addEventListener('pointerleave', function () { if (playing) startTimer(); });
+      c.addEventListener('focusin', stopTimer);
+      c.addEventListener('focusout', function () { if (playing) startTimer(); });
+    });
   });
 
   /* ---- Karten-Vorschau: Video spielt bei Hover/Tastaturfokus ----

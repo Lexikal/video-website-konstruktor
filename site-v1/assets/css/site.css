@@ -356,41 +356,59 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .svc-for{ font-size:.86rem; color:var(--muted); margin-top:var(--s-4); }
 .svc-for b{ color:var(--paper); font-weight:600; }
 
-/* ---------- Arbeiten / Filmstreifen ---------- */
+/* ---------- Arbeiten / Projekt-Reel ----------
+   Kein Musik-Player-Zitat: Bedienleiste liest sich wie ein Schnitt-Deck
+   (zurück/abspielen/weiter, Timecode-Anzeige, Kapitelpunkte), weil das
+   tatsächlich die Welt ist, aus der die Arbeit kommt. */
 .strip-viewport{ position:relative; }
 .strip{
   display:flex; gap:var(--s-4); overflow-x:auto; scroll-snap-type:x mandatory;
-  padding-inline:var(--pad); padding-bottom:var(--s-4); scrollbar-width:thin;
+  padding-block:var(--s-3) var(--s-4); scrollbar-width:thin;
   -webkit-overflow-scrolling:touch;
+  /* Genug Seitenraum, damit auch die erste/letzte Karte auf Desktop mittig
+     scrollen kann (50vw minus halbe Kartenbreite). Auf schmalen Screens
+     reicht das nicht aus — dort bleibt es beim normalen Rand-Padding, was
+     dort auch richtig ist: kein Platz für Nachbarkarten am Rand. */
+  padding-inline:max(var(--pad), calc(50vw - 260px));
 }
 .strip::-webkit-scrollbar{ height:3px; }
 .strip::-webkit-scrollbar-thumb{ background:var(--line-2); }
-
-/* Pfeile zum manuellen Steuern des Filmstreifens (site.js) — Hover schiebt
-   in die Richtung, Klick springt eine Karte weiter. Nur auf Geräten mit
-   echter Maus/Trackpad: auf Touch übernimmt das native Wischen, ein
-   zusätzlicher Button wäre dort nur im Weg. */
-.strip-nav{
-  position:absolute; top:50%; transform:translateY(-50%); z-index:5;
-  width:44px; height:44px; display:none; align-items:center; justify-content:center;
-  background:rgba(11,11,13,.72); border:1px solid var(--line-2); color:var(--paper);
-  font-size:1.3rem; line-height:1; cursor:pointer; appearance:none; padding:0;
-  transition:background .2s var(--ease), border-color .2s var(--ease), opacity .2s var(--ease);
-}
-.strip-nav:hover, .strip-nav:focus-visible{ background:var(--ink); border-color:var(--real); }
-.strip-nav--prev{ left:var(--s-2); }
-.strip-nav--next{ right:var(--s-2); }
-@media (hover:hover) and (pointer:fine){
-  .strip-nav{ display:flex; }
-}
 .card{
-  flex:0 0 78%; max-width:520px; scroll-snap-align:start; text-decoration:none;
+  flex:0 0 78%; max-width:520px; scroll-snap-align:center; text-decoration:none;
   border:1px solid var(--line); background:var(--ink-2); display:block;
-  transition:border-color .3s var(--ease), transform .4s var(--ease), box-shadow .3s var(--ease);
+  transition:border-color .3s var(--ease), box-shadow .3s var(--ease);
   appearance:none; padding:0; margin:0; font:inherit; color:inherit; text-align:left; cursor:pointer;
+  will-change:transform, opacity;
 }
-.card:hover{ border-color:var(--line-2); transform:translateY(-4px); }
-.card:hover{ box-shadow:0 0 0 1px var(--line-2), 0 18px 40px -20px rgba(0,0,0,.6); }
+.card:hover{ border-color:var(--line-2); box-shadow:0 0 0 1px var(--line-2), 0 18px 40px -20px rgba(0,0,0,.6); }
+
+/* ---------- Reel-Deck: Schnitt-Bedienleiste unter dem Streifen ---------- */
+.reel-deck{
+  display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap;
+  padding:0 var(--pad) var(--s-2);
+}
+.reel-btn{
+  width:40px; height:40px; border-radius:50%; flex:0 0 auto;
+  border:1px solid var(--line-2); background:transparent; color:var(--paper);
+  font-size:1rem; line-height:1; cursor:pointer; display:grid; place-items:center;
+  transition:border-color .2s var(--ease), color .2s var(--ease);
+}
+.reel-btn:hover, .reel-btn:focus-visible{ border-color:var(--real); }
+.reel-btn--play[aria-pressed="false"]{ color:var(--muted); }
+.reel-readout{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); font-variant-numeric:tabular-nums; margin-right:auto; white-space:nowrap;
+}
+.reel-readout b{ color:var(--paper); font-weight:600; }
+.reel-dots{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+.reel-dot{
+  width:7px; height:7px; border-radius:50%; padding:0; flex:0 0 auto;
+  border:1px solid var(--line-2); background:transparent; cursor:pointer;
+  transition:background .2s var(--ease), border-color .2s var(--ease);
+}
+.reel-dot[aria-current="true"]{ background:var(--real); border-color:var(--real); }
+.reel-dot--empty{ border-style:dashed; cursor:default; }
+.reel-dot:disabled{ cursor:default; }
 
 .card-media{ position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink-3); }
 .card-media img, .card-media video{ width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
@@ -624,7 +642,6 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
 @media (min-width:640px){
   .g2{ grid-template-columns:repeat(2,1fr); }
   .g4{ grid-template-columns:repeat(2,1fr); }
-  .card{ flex-basis:56%; }
   .foot-grid{ grid-template-columns:repeat(2,1fr); }
   .foot-legal{ font-size:.8rem; }
 }
@@ -636,13 +653,13 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
   .g4{ grid-template-columns:repeat(4,1fr); }
   .split{ grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:var(--s-8); }
   .svc{ grid-template-columns:80px minmax(0,1fr) minmax(0,1fr); gap:var(--s-6); align-items:start; }
-  .card{ flex-basis:32%; }
   .foot-grid{ grid-template-columns:1.4fr 1fr 1fr 1fr; }
   .steps li{ grid-template-columns:90px 1fr; }
 }
-@media (min-width:1200px){
-  .card{ flex-basis:26%; }
-}
+/* .card behält bei jeder Breite dieselbe Basis (78%, gekappt bei 520px) —
+   das Reel lebt genau davon, dass immer eine Karte im Zentrum groß steht
+   und die Nachbarn nur an den Rändern anschneiden, nicht davon, dass auf
+   breiten Screens mehr, kleinere Karten nebeneinander passen. */
 
 /* ---------- Reduced motion (BFSG / WCAG 2.3.3) ---------- */
 @media (prefers-reduced-motion:reduce){
