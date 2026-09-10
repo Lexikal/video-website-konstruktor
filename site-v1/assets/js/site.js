@@ -185,9 +185,11 @@
      automatisches Weiterschalten; bedienbar bleibt alles. */
   var REEL_TEXT = document.documentElement.lang === 'en'
     ? { trailer:'Trailer', close:'Close', play:'Play video', open:'Open project page',
-        year:'Year', role:'Role', type:'Type', client:'Client', carousel:'Selected projects' }
+        year:'Year', role:'Role', type:'Type', client:'Client', carousel:'Selected projects',
+        prev:'Previous', next:'Next', pause:'Pause', play_auto:'Play automatically' }
     : { trailer:'Trailer', close:'Schließen', play:'Video abspielen', open:'Projektseite öffnen',
-        year:'Jahr', role:'Rolle', type:'Art', client:'Kunde', carousel:'Ausgewählte Projekte' };
+        year:'Jahr', role:'Rolle', type:'Art', client:'Kunde', carousel:'Ausgewählte Projekte',
+        prev:'Zurück', next:'Weiter', pause:'Pausieren', play_auto:'Automatisch weiter' };
 
   /* ---- Akzentfarbe aus dem Standbild der Arbeit lesen ----
      Bewusst keine erfundene Marken-Akzentfarbe je Projekt: die Farbe kommt
@@ -556,7 +558,7 @@
     var pointerX = 0, pointerActive = false;
     var dragging = false, dragArmed = false, dragFrom = 0, dragStartPos = 0, dragMoved = 0;
     var visible = true;
-    var DEAD = 0.18, MAXV = 0.05;
+    var DEAD = 0.12, MAXV = 0.115;
 
     function spacing() { return (cards[0].offsetWidth || 300) * 0.74; }
 
@@ -653,7 +655,10 @@
     function measure() {
       var h = 0;
       cards.forEach(function (c) { if (c.offsetHeight > h) h = c.offsetHeight; });
-      if (h > 0) stage.style.setProperty('--reel-stage-h', Math.ceil(h + 72) + 'px');
+      /* Die Karte sitzt bei 42 % der Bühnenhöhe, darunter braucht die
+         Spiegelung noch rund ein Viertel der Kartenhöhe. Daraus ergibt sich die
+         nötige Bühnenhöhe — sonst schneidet overflow:hidden den Reflex ab. */
+      if (h > 0) stage.style.setProperty('--reel-stage-h', Math.ceil(h * 1.36 + 20) + 'px');
     }
 
     function frame() {
@@ -661,7 +666,7 @@
         if (!dragging) {
           if (snapTo !== null) {
             var d = snapTo - pos;
-            pos += d * 0.15;
+            pos += d * 0.22;
             if (Math.abs(d) < 0.0015) { pos = snapTo; snapTo = null; }
           } else {
             var t = 0;
@@ -674,7 +679,7 @@
             }
             if (pos <= 0 && t < 0) t *= 0.12;
             if (pos >= last && t > 0) t *= 0.12;
-            vel += (t - vel) * 0.07;
+            vel += (t - vel) * 0.14;
             pos += vel;
             if (pos < 0) pos += (0 - pos) * 0.14;
             if (pos > last) pos += (last - pos) * 0.14;
@@ -793,12 +798,19 @@
     }
 
     /* --- Deck --- */
-    var indexEl, totalEl, labelEl, playBtn, dots = [];
+    var indexEl, totalEl, labelEl, titleEl, thumbEl, playBtn, dots = [];
     function updateDeck() {
       if (!deck || current < 0) return;
       if (indexEl) indexEl.textContent = String(current + 1).padStart(2, '0');
-      var lbl = cards[current].querySelector('.svc-no');
+      var c = cards[current];
+      var lbl = c.querySelector('.card-eyebrow');
+      var ttl = c.querySelector('h3');
       if (labelEl) labelEl.textContent = lbl ? lbl.textContent : '';
+      if (titleEl) titleEl.textContent = ttl ? ttl.textContent : '';
+      if (thumbEl) {
+        if (c.dataset.poster) { thumbEl.src = c.dataset.poster; thumbEl.style.visibility = ''; }
+        else { thumbEl.removeAttribute('src'); thumbEl.style.visibility = 'hidden'; }
+      }
       dots.forEach(function (d, j) { d.setAttribute('aria-current', String(j === current)); });
     }
 
@@ -815,12 +827,34 @@
       if (!playBtn) return;
       playBtn.innerHTML = playing ? '&#10074;&#10074;' : '&#9654;';
       playBtn.setAttribute('aria-pressed', String(playing));
+      playBtn.setAttribute('aria-label', playing ? REEL_TEXT.pause : REEL_TEXT.play_auto);
+      if (deck) deck.setAttribute('data-playing', String(playing && !reduce));
     }
 
     if (deck) {
+      /* Deck wird hier neu aufgebaut: als Glaskörper mit Steuerung, laufender
+         Arbeit (Standbild + Titel) und Kapitelpunkten. Die Markup-Fassung in
+         den HTML-Dateien ist nur das Gerüst und ohne JS ohnehin ausgeblendet. */
+      deck.innerHTML =
+        '<div class="deck-pill">' +
+          '<button class="reel-btn reel-btn--prev" type="button" aria-label="' + REEL_TEXT.prev + '">&lsaquo;</button>' +
+          '<button class="reel-btn reel-btn--play" type="button" aria-pressed="true" aria-label="' + REEL_TEXT.pause + '">&#10074;&#10074;</button>' +
+          '<button class="reel-btn reel-btn--next" type="button" aria-label="' + REEL_TEXT.next + '">&rsaquo;</button>' +
+          '<div class="deck-now">' +
+            '<span class="deck-thumb"><img data-reel-thumb alt="" decoding="async"></span>' +
+            '<span class="deck-txt"><b data-reel-title></b><i data-reel-label></i></span>' +
+            '<span class="deck-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>' +
+          '</div>' +
+          '<span class="deck-sep" aria-hidden="true"></span>' +
+          '<div class="reel-dots" data-reel-dots></div>' +
+          '<span class="deck-index"><b data-reel-index>01</b>/<span data-reel-total>01</span></span>' +
+        '</div>';
+
       indexEl = deck.querySelector('[data-reel-index]');
       totalEl = deck.querySelector('[data-reel-total]');
       labelEl = deck.querySelector('[data-reel-label]');
+      titleEl = deck.querySelector('[data-reel-title]');
+      thumbEl = deck.querySelector('[data-reel-thumb]');
       playBtn = deck.querySelector('.reel-btn--play');
       var dotsWrap = deck.querySelector('[data-reel-dots]');
       if (totalEl) totalEl.textContent = String(cards.length).padStart(2, '0');

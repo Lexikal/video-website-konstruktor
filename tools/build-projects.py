@@ -229,15 +229,24 @@ def card(project, lang, prefix=""):
     ]
     attrs = "".join(f' {k}="{esc(v)}"' for k, v in data if v)
 
+    cta = ("Trailer ansehen" if lang == "de" else "Watch trailer") if video else ""
+    meta = " · ".join(x for x in [esc(project.get("jahr", "")), esc(typ_value)] if x)
+    overlay = (
+        f'<div class="card-overlay">'
+        + (f'<span class="card-cta">{cta}</span>' if cta else "")
+        + f'<span class="card-eyebrow">{esc(text["kategorie"])}</span>'
+        f'<h3>{esc(text["titel"])}</h3>'
+        f'<p class="card-meta">{meta}</p>'
+        f'</div>'
+    )
+
     return (
         f'<a class="card" href="{href}"{attrs}>\n'
         f'  <div class="card-inner">\n'
         f'    <div class="card-media{ori_class}">{media}'
         f'<span class="{modus["css"]}">{esc(modus[lang])}</span>'
-        f'<span class="badge-type">{esc(typ_value)}</span></div>\n'
-        f'    <div class="card-txt"><span class="svc-no">{esc(text["kategorie"])}</span>'
-        f'<h3>{esc(text["titel"])}</h3>'
-        f'<p>{esc(text["ergebnis"])}</p></div>\n'
+        f'<span class="badge-type">{esc(typ_value)}</span>'
+        f'{overlay}</div>\n'
         f'  </div></a>'
     )
 
@@ -261,9 +270,10 @@ def card_placeholder(project, lang):
         f'<div class="card card--empty">\n'
         f'  <div class="card-inner">\n'
         f'    <div class="card-media{ori_class}"><div class="card-ph">{wait}</div>'
-        f'<span class="badge-type">{typ}</span></div>\n'
-        f'    <div class="card-txt"><span class="svc-no">{kategorie}</span>'
-        f'<h3>{kategorie}</h3><p>{hint}</p></div>\n'
+        f'<span class="badge-type">{typ}</span>'
+        f'<div class="card-overlay">'
+        f'<span class="card-eyebrow">{kategorie}</span>'
+        f'<h3>{kategorie}</h3><p class="card-meta">{hint}</p></div></div>\n'
         f'  </div></div>'
     )
 
