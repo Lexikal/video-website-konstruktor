@@ -12,7 +12,7 @@ die bei einer handgepflegten statischen Seite tatsächlich vorkommen —
   * kaputtes HTML (offene Tags, doppelte IDs, fehlende alt/lang/title)
   * tote interne Links und fehlende Assets (auch aus CSS-url() und Video-Quellen)
   * CSS mit unausgeglichenen Klammern
-  * JS, das nicht einmal parst (per JavaScriptCore über osascript, nur macOS)
+  * JS, das nicht einmal parst (node --check, sonst JavaScriptCore/osascript)
   * vergessene {{PLATZHALTER}} auf Seiten, die keine haben sollten
   * fehlende Pflicht-Metadaten (description, canonical, CSP), zu lange Titel
   * erzeugte Seiten, die nicht mehr zu content/projekte.json passen
@@ -205,25 +205,34 @@ def check_css():
 
 
 def check_js():
-    """Syntaxprüfung über JavaScriptCore. Wir werten die Datei außerhalb eines
-    Browsers aus: ein ReferenceError auf 'window'/'document' heißt 'geparst,
-    aber DOM fehlt' — alles andere ist ein echter Fehler."""
-    if not shutil.which("osascript"):
-        warnings.append("JS: osascript nicht verfügbar — Syntaxprüfung übersprungen")
+    """Syntaxprüfung: node --check, wenn Node da ist (GitHub-Runner), sonst
+    JavaScriptCore über osascript (macOS). Bei JavaScriptCore werten wir die
+    Datei außerhalb eines Browsers aus: ein ReferenceError auf 'window'/
+    'document' heißt 'geparst, aber DOM fehlt' — alles andere ist ein Fehler."""
+    node = shutil.which("node")
+    osa = shutil.which("osascript")
+    if not node and not osa:
+        warnings.append("JS: weder node noch osascript verfügbar — Syntaxprüfung übersprungen")
         return
     for path in SITE.rglob("*.js"):
         rel = path.relative_to(SITE).as_posix()
         try:
-            out = subprocess.run(
-                ["osascript", "-l", "JavaScript", "-e", path.read_text(encoding="utf-8")],
-                capture_output=True, text=True, timeout=30,
-            )
+            if node:
+                out = subprocess.run([node, "--check", str(path)], capture_output=True, text=True, timeout=30)
+                ok = out.returncode == 0
+            else:
+                out = subprocess.run(
+                    [osa, "-l", "JavaScript", "-e", path.read_text(encoding="utf-8")],
+                    capture_output=True, text=True, timeout=30,
+                )
+                ok = out.returncode == 0 or bool(
+                    re.search(r"Can't find variable: (window|document|navigator)", out.stderr or ""))
         except subprocess.SubprocessError as e:
             warnings.append(f"JS {rel}: Prüfung fehlgeschlagen ({e})")
             continue
-        msg = (out.stderr or "").strip()
-        if out.returncode != 0 and not re.search(r"Can't find variable: (window|document|navigator)", msg):
-            err(rel, f"JS-Fehler: {msg.splitlines()[-1] if msg else '?'}")
+        if not ok:
+            msg = (out.stderr or out.stdout or "").strip().splitlines()
+            err(rel, f"JS-Fehler: {msg[-1] if msg else '?'}")
 
 
 def check_generated():
