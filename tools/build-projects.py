@@ -86,13 +86,13 @@ def derived(path, suffix):
     Die Karussell-Karte spielt eine stumme Vorschau; dafür den vollen
     45-MB-Film zu laden wäre auf Mobilgeräten unzumutbar. Deshalb erzeugt
     tools/media/add-video.sh je Film einen 8-Sekunden-Clip in 640 px und ein
-    800-px-Standbild. projekte.json bleibt davon unberührt: die Ableitung
+    960-px-Standbild. projekte.json bleibt davon unberührt: die Ableitung
     passiert rein über den Dateinamen, damit nichts doppelt gepflegt wird.
     """
-    if not path:
+    if not path or "." not in path:
         return path
-    stem, dot, ext = path.rpartition(".")
-    candidate = f"{stem}{suffix}.{ext}" if dot else f"{path}{suffix}"
+    stem, ext = path.rsplit(".", 1)
+    candidate = f"{stem}{suffix}.{ext}"
     return candidate if (SITE / candidate).is_file() else path
 
 
@@ -127,7 +127,9 @@ def validate(data):
         if p.get("orientation", "landscape") not in ORIENTATION_CLASS:
             errors.append(f"{where}: orientation '{p.get('orientation')}' unbekannt.")
         if p.get("kunde") and (p.get("typ") or TYP_DEFAULT) in NON_CLIENT_TYPES:
-            errors.append(f"{where}: kunde gesetzt, aber typ '{p.get('typ') or TYP_DEFAULT}' ist kein Auftrag.")
+            # Widerspricht meist PORTFOLIO-SPEZIFIKATION §2 — aber Grenzfälle
+            # (Spec Project für eine genannte Marke) sind möglich, also kein Abbruch.
+            warnings.append(f"{where}: kunde gesetzt, obwohl typ '{p.get('typ') or TYP_DEFAULT}' kein Auftrag ist.")
         for lang in ("de", "en"):
             text = p.get(lang)
             if not isinstance(text, dict):
@@ -365,13 +367,18 @@ def sitemap_entries(published, domain):
     for p in published:
         de = f"{domain}/projekte/{p['slug']}.html"
         en = f"{domain}/en/projects/{p['slug']}.html"
-        for loc in (de, en):
+        files = (SITE / "projekte" / f"{p['slug']}.html",
+                 SITE / "en" / "projects" / f"{p['slug']}.html")
+        for loc, file in zip((de, en), files):
+            # Echtes Änderungsdatum statt "heute": sonst ändert jeder Build die
+            # Sitemap, obwohl sich an der Seite nichts getan hat.
+            lastmod = last_change(file) if file.is_file() else datetime.date.today().isoformat()
             out.append(
                 "  <url>\n"
                 f"    <loc>{loc}</loc>\n"
                 f'    <xhtml:link rel="alternate" hreflang="de" href="{de}"/>\n'
                 f'    <xhtml:link rel="alternate" hreflang="en" href="{en}"/>\n'
-                f"    <lastmod>{datetime.date.today().isoformat()}</lastmod>\n"
+                f"    <lastmod>{lastmod}</lastmod>\n"
                 "    <priority>0.8</priority>\n"
                 "  </url>"
             )
@@ -379,8 +386,15 @@ def sitemap_entries(published, domain):
 
 
 def last_change(path):
-    """Datum der letzten Änderung: aus git, sonst Dateisystem."""
+    """Datum der letzten Änderung: heute bei uncommitteten Änderungen, sonst
+    das Datum des letzten Commits, sonst (ohne git) das Dateisystem."""
     try:
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--", str(path)],
+            cwd=ROOT, capture_output=True, text=True, timeout=5,
+        ).stdout.strip()
+        if dirty:
+            return datetime.date.today().isoformat()
         out = subprocess.run(
             ["git", "log", "-1", "--format=%cs", "--", str(path)],
             cwd=ROOT, capture_output=True, text=True, timeout=5,

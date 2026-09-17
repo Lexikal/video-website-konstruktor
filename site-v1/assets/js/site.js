@@ -656,7 +656,9 @@
 
     function spacing() { return (cards[0].offsetWidth || 300) * 0.74; }
 
+    var renderedPos = NaN;
     function render() {
+      renderedPos = pos;
       var sp = spacing();
       for (var i = 0; i < cards.length; i++) {
         var c = cards[i];
@@ -756,9 +758,8 @@
       renderedPos = NaN;
     }
 
-    var renderedPos = NaN;
     function frame() {
-      if (visible && !document.hidden) {
+      if (visible) {
         if (!dragging) {
           if (snapTo !== null) {
             var d = snapTo - pos;
@@ -788,7 +789,6 @@
              bewegt (Akku, Lüfter, Layout-Thrashing bei Hover). */
           if (pos !== renderedPos) {
             render();
-            renderedPos = pos;
             updateActive();
           }
         }
@@ -944,6 +944,9 @@
     function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
     function startTimer() {
       stopTimer();
+      /* Im versteckten Tab nicht weiterschalten — visibilitychange startet
+         den Takt wieder, sobald jemand hinsieht. */
+      if (document.hidden) return;
       timer = setInterval(function () { goTo(current + 1 > last ? 0 : current + 1); }, 4600);
     }
     function setPlaying(v) {

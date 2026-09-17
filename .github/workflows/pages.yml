@@ -8,8 +8,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -30,6 +28,10 @@ jobs:
     # Nur main geht live; dev und PRs bekommen nur die Prüfung.
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: check
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
