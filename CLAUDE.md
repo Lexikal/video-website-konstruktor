@@ -153,13 +153,14 @@ Website-Inhalte auf Deutsch/Englisch.
 ```
 python3 tools/build-projects.py   # Projektseiten + Karten + Sitemap aus content/projekte.json
 python3 tools/check.py            # HTML/Links/Assets/CSS/JS/Sitemap prüfen; --strict auch Warnungen
+python3 -m unittest discover -s tools -p 'test_*.py'   # Tests für Generator und Check
 tools/media/add-video.sh <roh.mov> <slug> [poster-sek]   # Film + Vorschau-Clip + Poster + Miniatur
 ```
 
 - `build-projects.py` validiert `projekte.json` und bricht bei Fehlern ab.
   Abgeleitete Medien (`<slug>-preview.mp4`, `<slug>-sm.jpg`) werden über den
   Dateinamen gefunden — in der JSON stehen nur Original und Poster.
-- `check.py` läuft in GitHub Actions auf jedem Push/PR (`.github/workflows/pages.yml`);
+- Tests und `check.py` laufen in GitHub Actions auf jedem Push/PR (`.github/workflows/pages.yml`);
   nur `main` wird deployt, `dev` bekommt nur die Prüfung.
 - GitHub Pages setzt keine HTTP-Header: CSP/Referrer stehen deshalb als `<meta>`
   in jeder Seite (und in `tools/templates/`). `.htaccess` gilt nur für Apache-Hosting.
