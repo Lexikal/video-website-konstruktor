@@ -231,8 +231,9 @@ def check_js():
             warnings.append(f"JS {rel}: Prüfung fehlgeschlagen ({e})")
             continue
         if not ok:
-            msg = (out.stderr or out.stdout or "").strip().splitlines()
-            err(rel, f"JS-Fehler: {msg[-1] if msg else '?'}")
+            lines = (out.stderr or out.stdout or "").strip().splitlines()
+            hit = [l for l in lines if "Error" in l] or lines
+            err(rel, f"JS-Fehler: {hit[0].strip() if hit else '?'}")
 
 
 def check_generated():
