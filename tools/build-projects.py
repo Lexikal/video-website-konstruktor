@@ -20,6 +20,7 @@ import html
 import json
 import pathlib
 import re
+import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -76,6 +77,79 @@ SITEMAP_END = "  <!-- PROJEKTE:END -->"
 def esc(value):
     """HTML-sicher escapen; None wird zu leerem String."""
     return html.escape(value or "", quote=True)
+
+
+def derived(path, suffix):
+    """Abgeleitete Mediendatei (z. B. '-preview.mp4', '-sm.jpg'), falls sie
+    neben dem Original liegt — sonst das Original selbst.
+
+    Die Karussell-Karte spielt eine stumme Vorschau; dafür den vollen
+    45-MB-Film zu laden wäre auf Mobilgeräten unzumutbar. Deshalb erzeugt
+    tools/media/add-video.sh je Film einen 8-Sekunden-Clip in 640 px und ein
+    800-px-Standbild. projekte.json bleibt davon unberührt: die Ableitung
+    passiert rein über den Dateinamen, damit nichts doppelt gepflegt wird.
+    """
+    if not path:
+        return path
+    stem, dot, ext = path.rpartition(".")
+    candidate = f"{stem}{suffix}.{ext}" if dot else f"{path}{suffix}"
+    return candidate if (SITE / candidate).is_file() else path
+
+
+SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+REQUIRED_TEXT = ("titel", "kategorie", "aufgabe", "ansatz", "ergebnis")
+
+
+def validate(data):
+    """Datenmodell prüfen, bevor irgendetwas geschrieben wird.
+
+    Ein Tippfehler in projekte.json soll den Build mit klarer Meldung
+    stoppen — nicht als halb leere Seite auf der Website landen. Prüft:
+    Slug-Format und -Eindeutigkeit, Pflichttexte je Sprache, bekannte
+    Modus-/Orientierungs-Werte und dass jede referenzierte Mediendatei
+    tatsächlich in site-v1/ liegt.
+    """
+    errors, warnings = [], []
+    seen = set()
+    projects = data.get("projekte")
+    if not isinstance(projects, list) or not projects:
+        return ["projekte: Liste fehlt oder ist leer."], warnings
+    for n, p in enumerate(projects):
+        slug = p.get("slug", "")
+        where = f"projekte[{n}] ({slug or '?'})"
+        if not SLUG_RE.match(slug):
+            errors.append(f"{where}: slug muss aus a-z, 0-9 und '-' bestehen.")
+        if slug in seen:
+            errors.append(f"{where}: slug doppelt.")
+        seen.add(slug)
+        if p.get("mode", "real") not in MODUS:
+            errors.append(f"{where}: mode '{p.get('mode')}' unbekannt (erlaubt: {', '.join(MODUS)}).")
+        if p.get("orientation", "landscape") not in ORIENTATION_CLASS:
+            errors.append(f"{where}: orientation '{p.get('orientation')}' unbekannt.")
+        if p.get("kunde") and (p.get("typ") or TYP_DEFAULT) in NON_CLIENT_TYPES:
+            errors.append(f"{where}: kunde gesetzt, aber typ '{p.get('typ') or TYP_DEFAULT}' ist kein Auftrag.")
+        for lang in ("de", "en"):
+            text = p.get(lang)
+            if not isinstance(text, dict):
+                errors.append(f"{where}: Block '{lang}' fehlt.")
+                continue
+            # Entwürfe dürfen unfertig sein — aber die Platzhalter-Kachel
+            # (showcase) zeigt die Kategorie, die muss also da sein.
+            needed = REQUIRED_TEXT if not p.get("draft") else ("kategorie",)
+            for key in needed:
+                if not (text.get(key) or "").strip():
+                    errors.append(f"{where}: {lang}.{key} fehlt oder ist leer.")
+        for key in ("video", "poster"):
+            path = p.get(key)
+            if path and not (SITE / path).is_file():
+                errors.append(f"{where}: {key} '{path}' liegt nicht in site-v1/.")
+        for still in p.get("stills") or []:
+            if not (SITE / still).is_file():
+                errors.append(f"{where}: still '{still}' liegt nicht in site-v1/.")
+        if not p.get("draft") and not p.get("video") and not p.get("poster"):
+            # Erlaubt (Seite zeigt "MEDIA folgt"), aber sichtbar machen.
+            warnings.append(f"{where}: veröffentlicht ohne video/poster — Karte zeigt Platzhalter.")
+    return errors, warnings
 
 
 def hero_media(project, lang, depth):
@@ -186,20 +260,25 @@ def card(project, lang, prefix=""):
     depth = "" if lang == "de" else "../"
     video = project.get("video")
     poster = project.get("poster")
+    # Karte und Deck-Miniatur bekommen die kleinen Ableitungen; der volle
+    # Film und das große Standbild bleiben in data-video/data-poster für
+    # das Trailer-Fenster.
+    preview = derived(video, "-preview")
+    thumb = derived(poster, "-sm")
     if video:
         # Vorschau läuft stumm, sobald die Karte in der Mitte steht (site.js);
         # ohne Ton, ohne Controls, kein Vorab-Laden.
-        poster_attr = f' poster="{depth}{esc(poster)}"' if poster else ""
+        poster_attr = f' poster="{depth}{esc(thumb)}"' if thumb else ""
         media = (
             f'<video class="card-video" muted loop playsinline preload="none"'
             f'{poster_attr} aria-hidden="true">'
-            f'<source src="{depth}{esc(video)}" type="video/mp4"></video>'
+            f'<source src="{depth}{esc(preview)}" type="video/mp4"></video>'
             f'<span class="card-play" aria-hidden="true">&#9654;</span>'
         )
     elif poster:
         alt = esc(text["titel"])
         media = (
-            f'<img src="{depth}{esc(poster)}" alt="{alt}" '
+            f'<img src="{depth}{esc(thumb)}" alt="{alt}" '
             f'loading="lazy" decoding="async">'
         )
     else:
@@ -227,6 +306,7 @@ def card(project, lang, prefix=""):
         ("data-modus-css", modus["css"]),
         ("data-video", f'{depth}{video}' if video else ""),
         ("data-poster", f'{depth}{poster}' if poster else ""),
+        ("data-thumb", f'{depth}{thumb}' if thumb and thumb != poster else ""),
     ]
     attrs = "".join(f' {k}="{esc(v)}"' for k, v in data if v)
 
@@ -298,9 +378,42 @@ def sitemap_entries(published, domain):
     return "\n".join(out)
 
 
+def last_change(path):
+    """Datum der letzten Änderung: aus git, sonst Dateisystem."""
+    try:
+        out = subprocess.run(
+            ["git", "log", "-1", "--format=%cs", "--", str(path)],
+            cwd=ROOT, capture_output=True, text=True, timeout=5,
+        ).stdout.strip()
+        if out:
+            return out
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return datetime.date.fromtimestamp(path.stat().st_mtime).isoformat()
+
+
+def refresh_static_lastmod(source, domain):
+    """<lastmod> der handgepflegten Einträge auf das echte Änderungsdatum
+    der jeweiligen HTML-Datei setzen — sonst meldet die Sitemap Seiten als
+    unverändert, die längst neu sind, und Suchmaschinen crawlen sie später."""
+    def fix(match):
+        loc = match.group(1)
+        rel = loc[len(domain):].lstrip("/") or "index.html"
+        if rel.endswith("/"):
+            rel += "index.html"
+        file = SITE / rel
+        if not file.is_file():
+            return match.group(0)
+        return match.group(0).replace(match.group(2), last_change(file))
+    return re.sub(
+        r"<loc>(" + re.escape(domain) + r"[^<]*)</loc>\s*(?:<xhtml:link[^>]*/>\s*)*<lastmod>([^<]+)</lastmod>",
+        fix, source,
+    )
+
+
 def update_sitemap(published, domain):
     path = SITE / "sitemap.xml"
-    source = path.read_text(encoding="utf-8")
+    source = refresh_static_lastmod(path.read_text(encoding="utf-8"), domain)
     block = f"{SITEMAP_START}\n{sitemap_entries(published, domain)}\n{SITEMAP_END}"
     if SITEMAP_START in source and SITEMAP_END in source:
         pattern = re.compile(
@@ -331,6 +444,11 @@ def replace_between_markers(path, block):
 
 def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
+    problems, warnings = validate(data)
+    for w in warnings:
+        print("HINWEIS:", w)
+    if problems:
+        sys.exit("FEHLER in content/projekte.json:\n  " + "\n  ".join(problems))
     published = [p for p in data["projekte"] if not p.get("draft")]
     if not published:
         sys.exit("FEHLER: kein einziges Projekt mit draft:false — nichts zu erzeugen.")

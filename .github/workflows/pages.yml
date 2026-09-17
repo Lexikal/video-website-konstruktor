@@ -1,8 +1,9 @@
-name: Deploy site-v1 to GitHub Pages
+name: Check and deploy site-v1
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "dev"]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,7 +16,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Läuft auf jedem Push und PR: kaputtes HTML, tote Links, fehlende Assets,
+  # nicht committete Generator-Ausgabe → roter Haken, kein Deploy.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate site-v1
+        run: python3 tools/check.py
+
   deploy:
+    # Nur main geht live; dev und PRs bekommen nur die Prüfung.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: check
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

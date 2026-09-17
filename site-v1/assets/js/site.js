@@ -267,6 +267,9 @@
 
   var reelModal = null, reelPanel = null, reelPanel3d = null, reelParts = null;
   var modalOpen = false, modalOrigin = null, modalLastFocus = null, modalBodyOverflow = '';
+  /* Zählt Öffnungen: eine noch laufende Schließ-Animation darf ein inzwischen
+     neu geöffnetes Fenster nicht mehr anfassen. */
+  var modalGen = 0, modalLocked = false;
   var modalNav = null;
   var tiltX = 0, tiltY = 0, tiltTX = 0, tiltTY = 0, tiltRaf = 0;
 
@@ -424,12 +427,27 @@
     reelParts.approach.hidden = !d.ansatz;
     reelParts.link.href = card.getAttribute('href') || '#';
 
-    var facts = [];
-    if (d.kategorie) facts.push('<li>' + d.kategorie + '</li>');
-    if (d.jahr) facts.push('<li>' + REEL_TEXT.year + ' <b>' + d.jahr + '</b></li>');
-    if (d.typ) facts.push('<li><b>' + d.typ + '</b></li>');
-    if (d.kunde) facts.push('<li>' + REEL_TEXT.client + ' <b>' + d.kunde + '</b></li>');
-    reelParts.facts.innerHTML = facts.join('');
+    /* Fakten als DOM-Knoten statt HTML-String: die Werte kommen zwar aus
+       eigenen Daten, aber ein Titel mit '<' soll trotzdem nie als Markup
+       landen. */
+    reelParts.facts.textContent = '';
+    function fact(label, value) {
+      if (!value) return;
+      var li = document.createElement('li');
+      if (label) li.appendChild(document.createTextNode(label + ' '));
+      var b = document.createElement('b');
+      b.textContent = value;
+      li.appendChild(b);
+      reelParts.facts.appendChild(li);
+    }
+    if (d.kategorie) {
+      var cat = document.createElement('li');
+      cat.textContent = d.kategorie;
+      reelParts.facts.appendChild(cat);
+    }
+    fact(REEL_TEXT.year, d.jahr);
+    fact('', d.typ);
+    fact(REEL_TEXT.client, d.kunde);
 
     var stageEl = $('.reel-stage', reelModal);
     var oldBadge = $('.badge-real, .badge-ki, .badge-hy, .badge-cgi', stageEl);
@@ -480,10 +498,14 @@
     fillModal(card);
     updateModalNav();
 
-    modalBodyOverflow = document.body.style.overflow;
+    /* Nur beim ersten Sperren merken — sonst wird 'hidden' aus einer noch
+       laufenden Schließ-Animation als Ausgangswert übernommen und die Seite
+       bleibt nach dem nächsten Schließen für immer scrollgesperrt. */
+    if (!modalLocked) { modalBodyOverflow = document.body.style.overflow; modalLocked = true; }
     document.body.style.overflow = 'hidden';
     reelModal.hidden = false;
     modalOpen = true;
+    modalGen += 1;
 
     /* FLIP: das Panel startet exakt auf der Kachel und wächst auf seine
        echte Layout-Position. Gleichmäßige Skalierung über das Breiten-
@@ -536,13 +558,16 @@
     v.load();
 
     var origin = modalOrigin;
+    var gen = modalGen;
     var finish = function () {
+      if (modalGen !== gen) return;   /* inzwischen neu geöffnet */
       reelModal.hidden = true;
       reelModal.removeAttribute('data-open');
       reelPanel.style.transition = 'none';
       reelPanel.style.transform = 'none';
       reelPanel.style.opacity = '1';
       document.body.style.overflow = modalBodyOverflow;
+      modalLocked = false;
       /* Zurück auf die Karte, aus der das Fenster gewachsen ist — nicht auf
          das, was vor dem Öffnen zufällig fokussiert war. Sonst bleibt der
          Fokus im inzwischen versteckten Panel hängen. */
@@ -606,9 +631,10 @@
       var setIt = function () { c.style.setProperty('--a', accents[i].join(',')); };
       var explicit = c.dataset.accent && hexToRgb(c.dataset.accent);
       if (explicit) { accents[i] = explicit; setIt(); return; }
-      if (!c.dataset.poster) { setIt(); return; }
+      var src = c.dataset.thumb || c.dataset.poster;
+      if (!src) { setIt(); return; }
       setIt();
-      readAccent(c.dataset.poster, function (rgb) {
+      readAccent(src, function (rgb) {
         if (rgb) { accents[i] = rgb; setIt(); }
       });
     });
@@ -623,6 +649,10 @@
     var dragging = false, dragArmed = false, dragFrom = 0, dragStartPos = 0, dragMoved = 0;
     var visible = true;
     var DEAD = 0.12, MAXV = 0.115;
+    /* Datensparmodus oder 2G: kein automatisches Vorschau-Video, nur das
+       Standbild mit Play-Zeichen — der Trailer bleibt per Klick erreichbar. */
+    var conn = navigator.connection || {};
+    var lite = !!(conn.saveData || /2g/.test(conn.effectiveType || ''));
 
     function spacing() { return (cards[0].offsetWidth || 300) * 0.74; }
 
@@ -689,7 +719,7 @@
       cards.forEach(function (c, i) {
         var v = c.querySelector('.card-video');
         if (!v) return;
-        if (i === current && visible && !reduce) {
+        if (i === current && visible && !reduce && !lite && !document.hidden) {
           v.play().catch(function () {});
         } else {
           v.pause();
@@ -723,10 +753,12 @@
          Spiegelung noch rund ein Viertel der Kartenhöhe. Daraus ergibt sich die
          nötige Bühnenhöhe — sonst schneidet overflow:hidden den Reflex ab. */
       if (h > 0) stage.style.setProperty('--reel-stage-h', Math.ceil(h * 1.36 + 20) + 'px');
+      renderedPos = NaN;
     }
 
+    var renderedPos = NaN;
     function frame() {
-      if (visible) {
+      if (visible && !document.hidden) {
         if (!dragging) {
           if (snapTo !== null) {
             var d = snapTo - pos;
@@ -744,12 +776,21 @@
             if (pos <= 0 && t < 0) t *= 0.12;
             if (pos >= last && t > 0) t *= 0.12;
             vel += (t - vel) * 0.14;
+            if (Math.abs(vel) < 0.00005) vel = 0;
             pos += vel;
             if (pos < 0) pos += (0 - pos) * 0.14;
             if (pos > last) pos += (last - pos) * 0.14;
+            if (Math.abs(pos) < 0.0005) pos = 0;
+            if (Math.abs(pos - last) < 0.0005) pos = last;
           }
-          render();
-          updateActive();
+          /* Steht alles, wird nichts geschrieben — sonst laufen 60 Style-
+             Zuweisungen pro Sekunde für neun Karten, obwohl sich nichts
+             bewegt (Akku, Lüfter, Layout-Thrashing bei Hover). */
+          if (pos !== renderedPos) {
+            render();
+            renderedPos = pos;
+            updateActive();
+          }
         }
         driftAccent();
       }
@@ -892,7 +933,8 @@
       if (labelEl) labelEl.textContent = lbl ? lbl.textContent : '';
       if (titleEl) titleEl.textContent = ttl ? ttl.textContent : '';
       if (thumbEl) {
-        if (c.dataset.poster) { thumbEl.src = c.dataset.poster; thumbEl.style.visibility = ''; }
+        var th = c.dataset.thumb || c.dataset.poster;
+        if (th) { thumbEl.src = th; thumbEl.style.visibility = ''; }
         else { thumbEl.removeAttribute('src'); thumbEl.style.visibility = 'hidden'; }
       }
       dots.forEach(function (d, j) { d.setAttribute('aria-current', String(j === current)); });
@@ -977,6 +1019,11 @@
         syncPreview();
       }, { threshold: 0.05 }).observe(stage);
     }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { stopTimer(); } else if (playing && visible) { startTimer(); }
+      syncPreview();
+    });
 
     window.addEventListener('resize', function () { measure(); render(); });
     if ('ResizeObserver' in window) {

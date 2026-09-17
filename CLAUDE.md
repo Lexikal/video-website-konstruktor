@@ -147,3 +147,20 @@ Vollständiger Stand: `compliance/COMPLIANCE.md` (Blocker-Liste, Lizenzregister 
 
 Der Nutzer spricht Russisch im Chat. Rückfragen und Erklärungen auf Russisch,
 Website-Inhalte auf Deutsch/Englisch.
+
+## 8. Bauen, prüfen, ausliefern
+
+```
+python3 tools/build-projects.py   # Projektseiten + Karten + Sitemap aus content/projekte.json
+python3 tools/check.py            # HTML/Links/Assets/CSS/JS/Sitemap prüfen; --strict auch Warnungen
+tools/media/add-video.sh <roh.mov> <slug> [poster-sek]   # Film + Vorschau-Clip + Poster + Miniatur
+```
+
+- `build-projects.py` validiert `projekte.json` und bricht bei Fehlern ab.
+  Abgeleitete Medien (`<slug>-preview.mp4`, `<slug>-sm.jpg`) werden über den
+  Dateinamen gefunden — in der JSON stehen nur Original und Poster.
+- `check.py` läuft in GitHub Actions auf jedem Push/PR (`.github/workflows/pages.yml`);
+  nur `main` wird deployt, `dev` bekommt nur die Prüfung.
+- GitHub Pages setzt keine HTTP-Header: CSP/Referrer stehen deshalb als `<meta>`
+  in jeder Seite (und in `tools/templates/`). `.htaccess` gilt nur für Apache-Hosting.
+- Lokale Vorschau: `python3 -m http.server 8765 --directory site-v1` (auch in `.claude/launch.json`).

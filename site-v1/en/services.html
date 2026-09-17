@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Services — fashion, brand and product film | Unique Films</title>
 <meta name="description" content="Fashion and beauty film, image film, product advertising and ongoing content production in {{STADT}}. Filmed for real, extended generatively.">
@@ -23,7 +25,16 @@
 <link rel="stylesheet" href="../assets/css/site.css">
 
 </head>
-<body>
+<body class="page--video-bg">
+<video class="bg-video" muted playsinline preload="none" aria-hidden="true" tabindex="-1">
+  <source src="../assets/video/leistungen-bg.mp4" type="video/mp4">
+</video>
+<div class="bg-video-fallback" aria-hidden="true"></div>
+<div class="bg-video-vignette" aria-hidden="true"></div>
+<!-- AI labelling (Art. 50 AI Act) — origin of this clip not confirmed yet.
+     Once settled, uncomment one of the two lines:
+     <span class="badge-ki bg-video-badge">AI-generated</span>
+     <span class="badge-real bg-video-badge">Shot for real</span> -->
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav">
   <a class="brand" href="index.html"><img class="brand-mark" src="../assets/img/logo/unique-films-icon.svg" alt="" width="20" height="20">Unique Films</a>
@@ -44,7 +55,7 @@
 <main id="main">
 <section class="sec sec--tight"><div class="wrap"><p class="kicker">Services</p><h1 class="display">What I<br>produce for you.</h1>
 <p class="lede">Four clearly defined offers instead of a list of thirty keywords. If your project sits between them, write to me — I will find the right combination.</p></div></section>
-<section class="sec"><div class="wrap"><article class="svc rv">
+<section class="sec"><div class="wrap veil"><article class="svc rv">
   <div class="svc-no">01</div>
   <div><h3>Fashion &amp; beauty</h3></div>
   <div class="svc-body"><p class="muted">Campaign film, lookbook, editorial, show and backstage. My core field — years of working with models, stylists, make-up artists and labels, and a clear sense of what an image has to look like to work in both a portfolio and a campaign.</p><ul class="chips"><li>Campaign film</li><li>Lookbook</li><li>Editorial stills</li><li>Show &amp; backstage</li><li>Beauty macro</li><li>Social cutdowns</li></ul>
@@ -75,8 +86,8 @@
   <span class="tag tag--hy">03 · Hybrid</span>
   <h3>Combined</h3><p class="muted" style="margin:0;font-size:.94rem">The actual point: real material as the base, generative production as the extension. One look, one hand.</p>
   <ul><li>Real model, generated world</li><li>Real product, generated environment</li><li>One shoot → many campaigns</li><li>Edit, colour, sound from one source</li></ul></article></div></div></section>
-<section class="sec" id="ablauf"><div class="wrap"><p class="kicker">Process</p><h2 class="display" style="margin-bottom:24px">How a project runs.</h2><ol class="steps rv"><li><div><h3>Conversation</h3><p>Twenty minutes. You describe what should happen in the end. I say whether and how I can solve it — and what it costs.</p></div></li><li><div><h3>Concept</h3><p>One document: idea, visual language, schedule, shoot or generation, delivery dates. Production starts only after that.</p></div></li><li><div><h3>Production</h3><p>Shoot day, generative production or both. I bring camera, light and sound; models, location and styling coordinated on request.</p></div></li><li><div><h3>Post</h3><p>Edit, colour, sound, retouch, generative extensions. Two revision rounds are included.</p></div></li><li><div><h3>Delivery</h3><p>Finished files in every required format and aspect ratio, with subtitles, ready to publish.</p></div></li></ol></div></section>
-<section class="sec"><div class="wrap"><p class="kicker">Orientation</p><h2 class="display" style="margin-bottom:32px">Price range.</h2><div class="grid g4"><div class="price  rv">
+<section class="sec" id="ablauf"><div class="wrap veil"><p class="kicker">Process</p><h2 class="display" style="margin-bottom:24px">How a project runs.</h2><ol class="steps rv"><li><div><h3>Conversation</h3><p>Twenty minutes. You describe what should happen in the end. I say whether and how I can solve it — and what it costs.</p></div></li><li><div><h3>Concept</h3><p>One document: idea, visual language, schedule, shoot or generation, delivery dates. Production starts only after that.</p></div></li><li><div><h3>Production</h3><p>Shoot day, generative production or both. I bring camera, light and sound; models, location and styling coordinated on request.</p></div></li><li><div><h3>Post</h3><p>Edit, colour, sound, retouch, generative extensions. Two revision rounds are included.</p></div></li><li><div><h3>Delivery</h3><p>Finished files in every required format and aspect ratio, with subtitles, ready to publish.</p></div></li></ol></div></section>
+<section class="sec"><div class="wrap veil"><p class="kicker">Orientation</p><h2 class="display" style="margin-bottom:32px">Price range.</h2><div class="grid g4"><div class="price  rv">
   <h3>Social package</h3><p class="amount">from €890<small>per shoot day</small></p>
   <ul><li>Half shoot day</li><li>3–5 finished reels</li><li>Vertical + square</li><li>Subtitles</li><li>Delivered in 7 days</li></ul><a class="btn btn--ghost" href="contact.html">Enquire</a></div><div class="price price--hl rv">
   <h3>Brand or campaign film</h3><p class="amount">from €2,400<small>per project</small></p>
@@ -85,7 +96,7 @@
   <ul><li>Film + stills</li><li>Set coordination</li><li>Generative extension</li><li>Editorial retouch</li><li>Usage rights as agreed</li></ul><a class="btn btn--ghost" href="contact.html">Enquire</a></div><div class="price  rv">
   <h3>Content Partnership</h3><p class="amount">from €1,900<small>per month</small></p>
   <ul><li>1 shoot day per quarter</li><li>8–12 assets per month</li><li>Ad variants</li><li>Fixed delivery dates</li><li>Cancel monthly</li></ul><a class="btn btn--ghost" href="contact.html">Enquire</a></div></div><p class="form-note" style="margin-top:24px">Guide values. Under § 19 of the German VAT Act (small-business scheme) no VAT is charged or shown — the prices stated are final prices. The actual price depends on scope, shooting time, crew, usage rights and deadlines, and is confirmed in writing before we start. Travel and accommodation outside {{STADT}} charged as incurred.</p></div></section>
-<section class="sec"><div class="wrap">
+<section class="sec"><div class="wrap veil">
   <p class="kicker">FAQ</p>
   <h2 class="display" style="margin-bottom:20px">Revisions, formats,<br>rights, music.</h2>
   <p class="lede" style="margin-top:0">Fifteen questions that come up before most productions — and what sits behind them on the production side, answered on a page of their own.</p>
