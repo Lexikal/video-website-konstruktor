@@ -85,6 +85,35 @@
       }
     },
     {
+      "slug": "fashion-editorial-pyramide",
+      "draft": false,
+      "featured": false,
+      "jahr": "",
+      "mode": "real",
+      "typ": "Personal Project",
+      "orientation": "landscape",
+      "kunde": "",
+      "video": "assets/video/fashion-editorial-pyramide.mp4",
+      "poster": "assets/img/fashion-editorial-pyramide.jpg",
+      "stills": [],
+      "de": {
+        "titel": "Fashion Editorial — Pyramide",
+        "kategorie": "Fashion",
+        "rolle": "",
+        "aufgabe": "Freies Fashion-Editorial in freier Natur, ohne Auftrag entstanden.",
+        "ansatz": "Ein Model in leuchtend rotem Kleid vor einer historischen Pyramide und in einer Felsschlucht — bewegte Stoffbahnen als Kontrast zu Stein und Wald, vollständig real gedreht mit kräftiger Farbkorrektur.",
+        "ergebnis": "Kurzes Editorial-Reel, das Kleid, Architektur und Landschaft als eine Bildsprache zeigt."
+      },
+      "en": {
+        "titel": "Fashion Editorial — Pyramid",
+        "kategorie": "Fashion",
+        "rolle": "",
+        "aufgabe": "Free fashion editorial shot outdoors in nature, with no client brief behind it.",
+        "ansatz": "One model in a bright red dress against a historic pyramid and in a rock canyon — flowing fabric set against stone and forest, shot entirely for real with bold color grading.",
+        "ergebnis": "A short editorial reel that reads the dress, the architecture and the landscape as one visual language."
+      }
+    },
+    {
       "slug": "beauty-wettbewerb",
       "draft": false,
       "featured": true,

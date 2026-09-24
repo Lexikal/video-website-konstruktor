@@ -672,6 +672,11 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 @media (max-width:720px){
   .deck-bars, .deck-sep{ display:none; }
   .deck-txt b, .deck-txt i{ max-width:34vw; }
+  /* 60vw ist eine Desktop-Zahl (schmaleres Fenster gibt dem Text unter dem
+     16:9-Video mehr Höhe). Auf einem Telefon ist es umgekehrt: das Fenster
+     ist hochkant, Höhe ist reichlich vorhanden — schmal macht das Panel nur
+     unnötig winzig. */
+  .reel-panel{ width:92vw; }
 }
 @media (max-width:520px){
   .deck-now{ display:none; }
@@ -696,7 +701,11 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .reel-modal[data-open="true"] .reel-scrim{ opacity:1; }
 .reel-panel{
   position:relative; z-index:1;
-  width:min(82vw, 1240px); max-height:calc(100vh - clamp(32px,8vw,96px));
+  /* Schmaler als vorher (war 82vw/1240px): bei 16:9 fester Höhe (siehe
+     .reel-stage) frisst ein breiteres Fenster sonst fast das ganze
+     Höhenbudget für das Video, und für Titel/Text bleibt kaum noch Platz
+     übrig — auf normalen Laptop-Fenstern reichte das nicht. */
+  width:min(60vw, 920px); max-height:calc(100vh - clamp(32px,8vw,96px));
   transform-origin:50% 50%; will-change:transform, opacity;
   --accent:150,155,165;
 }
@@ -769,7 +778,12 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 }
 
 .reel-stage{
-  position:relative; flex:0 1 auto; min-height:0;
+  /* flex-shrink:0 — die Bühne behält immer 16:9. Ohne das quetscht der
+     Flex-Container sie auf kurzen Fenstern (Laptop, Lesezeichenleiste offen)
+     niedriger als das Video ist — object-fit:cover schneidet dann sichtbar
+     oben/unten vom Bild ab, obwohl die Datei selbst unbeschnitten ist.
+     .reel-info federt den fehlenden Platz stattdessen ab (siehe dort). */
+  position:relative; flex:0 0 auto; min-height:0;
   aspect-ratio:16/9; background:var(--ink-3); overflow:hidden;
 }
 .reel-stage video, .reel-stage img{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -811,9 +825,14 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .reel-nav[hidden]{ display:none; }
 
 .reel-info{
+  /* Nimmt den Platz, den die Bühne nicht mehr abgibt (siehe .reel-stage) —
+     schrumpft bis auf 0 und scrollt intern, statt das Video zu verzerren.
+     min-height:0 ist hier Pflicht: ohne das weigert sich ein Flex-Kind,
+     unter seine Inhaltshöhe zu schrumpfen, egal was flex sagt. */
+  flex:1 1 auto; min-height:0;
   display:grid; gap:var(--s-4) var(--s-6); align-items:end;
   padding:clamp(18px,2.6vw,30px) clamp(16px,2.4vw,26px);
-  overflow-y:auto; min-height:0; overscroll-behavior:contain;
+  overflow-y:auto; overscroll-behavior:contain;
 }
 /* Hierarchie: der Titel trägt, alles darunter ordnet nur ein. */
 .reel-info h2{
