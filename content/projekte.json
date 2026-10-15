@@ -231,7 +231,7 @@
     },
     {
       "slug": "interview",
-      "draft": true,
+      "draft": false,
       "showcase": true,
       "featured": false,
       "jahr": "",
@@ -239,24 +239,24 @@
       "typ": "Personal Project",
       "orientation": "landscape",
       "kunde": "",
-      "video": "",
-      "poster": "",
+      "video": "assets/video/interview-hettich.mp4",
+      "poster": "assets/img/interview-hettich.jpg",
       "stills": [],
       "de": {
-        "titel": "",
+        "titel": "Interview — Dr. Robert Hettich",
         "kategorie": "Interview",
         "rolle": "",
-        "aufgabe": "",
-        "ansatz": "",
-        "ergebnis": ""
+        "aufgabe": "Interview mit dem Künstler Dr. Robert Hettich in seinem Atelier.",
+        "ansatz": "Ruhige Sprechsituation zwischen großformatigen Gemälden und Pinseln, ergänzt durch Bildmaterial seiner Malerei und einen Titelvorspann. Die Musik ist KI-generiert (eigene Produktion), Bild und Ton des Interviews sind real aufgenommen.",
+        "ergebnis": "Kurzes Künstlerporträt in Interviewform, gut zweieinhalb Minuten lang."
       },
       "en": {
-        "titel": "",
+        "titel": "Interview — Dr. Robert Hettich",
         "kategorie": "Interview",
         "rolle": "",
-        "aufgabe": "",
-        "ansatz": "",
-        "ergebnis": ""
+        "aufgabe": "Interview with the artist Dr. Robert Hettich in his studio.",
+        "ansatz": "A calm sit-down among large-format paintings and brushes, supported by footage of his paintings and a title sequence. The music is AI-generated (own production); the interview picture and sound are recorded for real.",
+        "ergebnis": "A short artist portrait in interview form, a little over two and a half minutes long."
       }
     },
     {
