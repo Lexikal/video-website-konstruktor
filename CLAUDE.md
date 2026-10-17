@@ -165,3 +165,13 @@ tools/media/add-video.sh <roh.mov> <slug> [poster-sek]   # Film + Vorschau-Clip 
 - GitHub Pages setzt keine HTTP-Header: CSP/Referrer stehen deshalb als `<meta>`
   in jeder Seite (und in `tools/templates/`). `.htaccess` gilt nur für Apache-Hosting.
 - Lokale Vorschau: `python3 -m http.server 8765 --directory site-v1` (auch in `.claude/launch.json`).
+
+### Interner Bereich (`site-v1/intern.html`)
+- Code-geschützte Seite mit dem Gesprächsleitfaden (Erstgespräch, Fragen, Brief-Vorlage).
+  Nicht verlinkt, `noindex`, nicht in der Sitemap. Es werden weder Cookies noch Storage genutzt.
+- Das Repository ist öffentlich: im Repo liegt **nur der verschlüsselte Text**
+  (`site-v1/assets/intern/leitfaden.enc.json`, PBKDF2 → AES-256-GCM). Der Browser entschlüsselt ihn
+  mit dem Code (`assets/js/intern.js`). Der Klartext liegt **nur lokal** in `private-src/` (in
+  `.git/info/exclude`), der Code steht nirgends im Repo.
+- Neu verschlüsseln (Text geändert oder neuer Code):
+  `UF_CODE="…" swift tools/private/encrypt-page.swift private-src/discovery-guide.html site-v1/assets/intern/leitfaden.enc.json`

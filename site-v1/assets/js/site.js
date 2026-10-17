@@ -1056,6 +1056,35 @@
     if (e.target.tagName === 'VIDEO') e.preventDefault();
   });
 
+  /* ---- Modus-Karten (Gedreht / Erzeugt / Hybrid) ----
+     Neigung und seitliches Rücken beim Überfahren: nur --px (−1…1) wird
+     gesetzt, den Rest erledigt das CSS. Nur Maus — auf Touch schweben die
+     Karten und glänzen, ohne dass ein Finger sie verschiebt. Außerhalb des
+     Bildschirms pausieren die Animationen (Akku). */
+  var modes = $$('.mode');
+  if (modes.length) {
+    if (!reduce) {
+      modes.forEach(function (card) {
+        card.addEventListener('pointermove', function (e) {
+          if (e.pointerType !== 'mouse') return;
+          var r = card.getBoundingClientRect();
+          var x = ((e.clientX - r.left) / r.width) * 2 - 1;
+          card.style.setProperty('--px', Math.max(-1, Math.min(1, x)).toFixed(3));
+        });
+        card.addEventListener('pointerleave', function () { card.style.setProperty('--px', '0'); });
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      var modeIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) en.target.removeAttribute('data-offscreen');
+          else en.target.setAttribute('data-offscreen', '');
+        });
+      }, { rootMargin: '80px' });
+      modes.forEach(function (card) { modeIO.observe(card); });
+    }
+  }
+
   /* ---- Jahr im Footer ---- */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();

@@ -226,19 +226,73 @@ h2.display{ font-size:var(--t-h2); }
 .g4{ grid-template-columns:1fr; }
 .split{ display:grid; gap:var(--s-6); grid-template-columns:1fr; align-items:start; }
 
-/* ---------- Modus-Karten REAL / KI / HYBRID ---------- */
+/* ---------- Modus-Karten REAL / KI / HYBRID ----------
+   Die Karten schweben: langsames Auf und Ab, je Karte phasenversetzt. Beim
+   Überfahren neigen sie sich leicht zum Zeiger und rücken ein Stück zur Seite
+   (site.js setzt --px, −1…1). Über die 3-px-Kante läuft in großen Abständen ein
+   weicher Lichtreflex, von Karte zu Karte versetzt — gemächlich, damit man
+   den Glanz sieht und den Text trotzdem lesen kann. Die Farbe bleibt
+   Bedeutung (warm = real, kalt = KI), der Reflex selbst ist neutral weiß.
+   Eigenschaften getrennt, damit sie sich nicht in die Quere kommen:
+   translate = Schweben, transform = seitliches Rücken (und .rv-Einblenden),
+   rotate = Neigung. */
+.grid:has(> .mode){ perspective:1100px; }
 .mode{
+  --c:237,234,228; --px:0; --gd:0s; --fd:0s;
   border:1px solid var(--line); padding:var(--s-6) var(--s-5) var(--s-7);
   background:var(--ink-2); position:relative; overflow:hidden;
-  transition:border-color .3s var(--ease), transform .4s var(--ease);
+  box-shadow:
+    0 30px 46px -32px rgba(0,0,0,.9),
+    0 44px 80px -52px rgba(var(--c), .28);
+  transition:border-color .3s var(--ease), box-shadow .45s var(--ease),
+             transform .5s var(--ease), rotate .5s var(--ease);
+  animation:mode-float 8s ease-in-out var(--fd) infinite;
 }
-.mode::before{ content:""; position:absolute; inset:0 0 auto 0; height:3px; }
-.mode--real::before{ background:var(--real); }
-.mode--ki::before{ background:var(--ki); }
-.mode--hy::before{ background:linear-gradient(90deg,var(--real),var(--ki)); }
+.mode > *{ position:relative; z-index:1; }
+.mode--real{ --c:255,158,77; --strip:linear-gradient(var(--real),var(--real)); }
+.mode--ki{ --c:91,168,217; --strip:linear-gradient(var(--ki),var(--ki)); }
+.mode--hy{ --c:237,234,228; --strip:linear-gradient(90deg,var(--real),var(--ki)); }
+.mode:nth-child(2){ --fd:-2.7s; --gd:1.3s; }
+.mode:nth-child(3){ --fd:-5.4s; --gd:2.6s; }
+/* Kante oben: Kennfarbe + darüber laufender Reflex (zweite Hintergrundebene). */
+.mode::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:3px; z-index:2;
+  background:
+    linear-gradient(100deg, transparent 38%, rgba(255,255,255,.95) 50%, transparent 62%),
+    var(--strip);
+  background-size:300% 100%, 100% 100%; background-repeat:no-repeat;
+  background-position:100% 0, 0 0;
+  animation:mode-glint-edge 10s linear var(--gd) infinite;
+}
+/* Das Licht fällt von der Kante weich in die Karte hinein. */
+.mode::after{
+  content:""; position:absolute; inset:0 0 auto 0; height:130px; z-index:0; pointer-events:none;
+  background:linear-gradient(100deg, transparent 30%, rgba(var(--c), .20) 50%, transparent 70%);
+  background-size:300% 100%; background-repeat:no-repeat; background-position:100% 0;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent);
+          mask-image:linear-gradient(180deg,#000,transparent);
+  animation:mode-glint-glow 10s linear var(--gd) infinite;
+}
+@keyframes mode-float{ 0%,100%{ translate:0 0; } 50%{ translate:0 -9px; } }
+/* Reflex läuft in den ersten 40 % (4 s) von rechts nach links, den Rest ruht
+   die Kante — so wirkt es wie ein Lichtstrahl, der vorbeizieht. */
+@keyframes mode-glint-edge{
+  0%{ background-position:100% 0, 0 0; }
+  40%,100%{ background-position:0% 0, 0 0; }
+}
+@keyframes mode-glint-glow{
+  0%{ background-position:100% 0; }
+  40%,100%{ background-position:0% 0; }
+}
 /* Farbe bleibt auf der 3px-Kante oben (= die Kennzeichnung), nicht auf
    Rahmen oder Fläche der Karte. */
-.mode:hover{ transform:translateY(-4px); border-color:var(--line-2); }
+.mode:hover, .mode.rv.in:hover{
+  transform:translateX(calc(var(--px) * 9px));
+  rotate:0 1 0 calc(var(--px) * 6deg);
+  border-color:var(--line-2);
+  transition-delay:0s !important;
+}
+.mode[data-offscreen], .mode[data-offscreen]::before, .mode[data-offscreen]::after{ animation-play-state:paused; }
 .mode h3{ font-family:var(--display); font-weight:800; text-transform:uppercase; font-size:1.5rem; letter-spacing:-.02em; margin:var(--s-4) 0 var(--s-3); }
 .mode ul{ list-style:none; margin:var(--s-4) 0 0; padding:0; font-size:.9rem; color:var(--muted); }
 .mode li{ padding:7px 0; border-bottom:1px solid var(--line); }
@@ -966,6 +1020,9 @@ body.page--video-bg .wrap.veil{ background:rgba(11,11,13,.84); padding-block:var
 .pillar{ border-top:1px solid var(--line); padding-top:var(--s-4); }
 .pillar h3{ font-family:var(--display); font-weight:800; text-transform:uppercase; font-size:1.05rem; letter-spacing:-.01em; margin:0 0 var(--s-2); }
 .pillar p{ margin:0; color:var(--muted); font-size:.9rem; }
+.pillar ul{ list-style:none; margin:var(--s-3) 0 0; padding:0; font-size:.9rem; color:var(--muted); }
+.pillar li{ padding:7px 0; border-bottom:1px solid var(--line); }
+.pillar li:last-child{ border-bottom:0; }
 /* Nummer im Leistungs-Teaser auf der Startseite */
 .pillar .svc-no{ display:block; margin-bottom:var(--s-2); }
 /* Anker-Sprungziele nicht unter die fixierte Kopfzeile schieben */
@@ -1085,6 +1142,8 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
 @media (scripting: enabled){
   .rv{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
   .rv.in{ opacity:1; transform:none; }
+  .mode.rv{ transition:opacity .8s var(--ease), border-color .3s var(--ease), box-shadow .45s var(--ease),
+                       transform .55s var(--ease), rotate .5s var(--ease); }
 }
 
 /* ---------- Breakpoints ---------- */
@@ -1114,6 +1173,8 @@ details.faq p{ margin:0 0 var(--s-5); color:var(--muted); max-width:70ch; }
   *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
   .rv{ opacity:1; transform:none; }
   .marquee ul{ animation:none; }
+  .mode, .mode::before, .mode::after{ animation:none; }
+  .mode:hover, .mode.rv.in:hover{ transform:none; rotate:none; }
   body.page--video-bg .bg-video{ display:none; }
   body.page--video-bg .bg-video-fallback{ display:block; }
   /* Reel: die räumliche Staffelung bleibt (das ist Layout, keine Bewegung),
